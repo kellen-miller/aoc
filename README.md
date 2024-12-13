@@ -27,4 +27,4 @@ task run:go -- --year 2024 --day 1 --part 1
 
 ## Languages
 
-- [Go](go/)
+- [go](go/)
