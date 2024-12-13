@@ -1,29 +1,39 @@
 package day3
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/kellen-miller/aoc/go/pkg/io"
+	"github.com/stretchr/testify/require"
+)
 
 func TestPart1(t *testing.T) {
 	tcs := map[string]struct {
 		input string
-		want  int
+		want  string
 	}{
 		"example": {
 			input: "example.txt",
-			want:  4361,
+			want:  "4361",
 		},
 		"input": {
 			input: "input.txt",
-			want:  531561,
+			want:  "531561",
 		},
 	}
 
 	for name, tc := range tcs {
 		t.Run(name, func(t *testing.T) {
-			got := FindValidParts(tc.input)
-			if got != tc.want && tc.want != 0 {
-				t.Errorf("FindValidParts = %d; want %d", got, tc.want)
+			sc, closeFile := io.GetScanner(tc.input)
+			defer closeFile()
+
+			got, err := new(Day).Part2(sc)
+			require.NoError(t, err)
+
+			if got != tc.want && tc.want != "" {
+				t.Errorf("FindValidParts = %s; want %s", got, tc.want)
 			} else {
-				t.Logf("FindValidParts = %d", got)
+				t.Logf("FindValidParts = %s", got)
 			}
 		})
 	}

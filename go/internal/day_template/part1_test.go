@@ -4,21 +4,22 @@ import (
 	"testing"
 
 	"github.com/kellen-miller/aoc/go/pkg/io"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestPart1(t *testing.T) {
+func TestDay_Part1(t *testing.T) {
 	tcs := map[string]struct {
 		input string
 		want  string
 	}{
 		"example": {
 			input: "example1.txt",
-			want:  "18",
+			want:  "",
 		},
 		"input": {
 			input: "input1.txt",
-			want:  "2551",
+			want:  "",
 		},
 	}
 
@@ -27,15 +28,10 @@ func TestPart1(t *testing.T) {
 			sc, closeFile := io.GetScanner(tc.input)
 			defer closeFile()
 
-			d := new(Day)
-			got, err := d.Part1(sc)
+			got, err := new(Day).Part1(sc)
 			require.NoError(t, err)
 
-			if got != tc.want && tc.want != "" {
-				t.Errorf("got %s; want %s", got, tc.want)
-			} else {
-				t.Logf("got %s", got)
-			}
+			assert.Equal(t, tc.want, got)
 		})
 	}
 }

@@ -1,10 +1,9 @@
 package day2
 
 import (
+	"bufio"
 	"strconv"
 	"strings"
-
-	"github.com/kellen-miller/aoc/go/pkg/io"
 )
 
 type CubeMaxes struct {
@@ -13,10 +12,7 @@ type CubeMaxes struct {
 	Blue  int
 }
 
-func GamesPossiblePowerSum(input string) int {
-	sc, closeFile := io.GetScanner(input)
-	defer closeFile()
-
+func (d *Day) Part2(sc *bufio.Scanner) (string, error) {
 	var sum int
 
 	for sc.Scan() {
@@ -24,7 +20,7 @@ func GamesPossiblePowerSum(input string) int {
 		sum += maxes.Red * maxes.Green * maxes.Blue
 	}
 
-	return sum
+	return strconv.Itoa(sum), nil
 }
 
 func parseRoundsPower(line string) *CubeMaxes {

@@ -1,10 +1,9 @@
 package day2
 
 import (
+	"bufio"
 	"strconv"
 	"strings"
-
-	"github.com/kellen-miller/aoc/go/pkg/io"
 )
 
 const (
@@ -13,16 +12,13 @@ const (
 	MaxBlueCubes  = 14
 )
 
-func GamesPossibleSum(input string) int {
-	sc, closeFile := io.GetScanner(input)
-	defer closeFile()
-
+func (d *Day) Part1(sc *bufio.Scanner) (string, error) {
 	var sum int
 	for sc.Scan() {
 		sum += parseGame(sc.Text())
 	}
 
-	return sum
+	return strconv.Itoa(sum), nil
 }
 
 func parseGame(line string) int {

@@ -1,17 +1,13 @@
 package day3
 
 import (
+	"bufio"
 	"strconv"
 	"strings"
 	"unicode"
-
-	"github.com/kellen-miller/aoc/go/pkg/io"
 )
 
-func FindValidParts(input string) int {
-	sc, closeFile := io.GetScanner(input)
-	defer closeFile()
-
+func (d *Day) Part1(sc *bufio.Scanner) (string, error) {
 	var (
 		sum                    int
 		potentialPartLocations [][]int
@@ -47,7 +43,7 @@ func FindValidParts(input string) int {
 		lineIdx++
 	}
 
-	return sum
+	return strconv.Itoa(sum), nil
 }
 
 func extractPotentialPart(line string, lastLine string, startIndex int) (int, int, bool) {
