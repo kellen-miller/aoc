@@ -2,6 +2,10 @@ package internal
 
 import "bufio"
 
+const (
+	Input = "input.txt"
+)
+
 type AdventYear interface {
 	Year() int
 	AdventDays() []AdventDay

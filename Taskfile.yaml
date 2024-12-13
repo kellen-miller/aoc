@@ -8,3 +8,7 @@ tasks:
   run:go:
     cmds:
       - go run go/cmd/advent/main.go {{.CLI_ARGS}}
+
+  go:lint:
+    cmds:
+      - golangci-lint run go/... --config go/.golangci.yml --show-stats

@@ -6,8 +6,8 @@ import (
 )
 
 type CapacityHeap[T utils.ComparableNumber] struct {
-	Capacity int
 	*binaryheap.Heap[T]
+	Capacity int
 }
 
 func (h *CapacityHeap[T]) Push(val T) {

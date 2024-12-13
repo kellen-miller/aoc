@@ -22,6 +22,7 @@ func NewGrid[T any](cols int, rows int) *Grid[T] {
 }
 
 func NewGridFromFile[T any](sc *bufio.Scanner, lineParseFn func(string) []T) (*Grid[T], error) {
+	//nolint: prealloc // We don't know the size of the grid yet
 	var rows [][]T
 	for sc.Scan() {
 		rows = append(rows, lineParseFn(sc.Text()))
@@ -44,8 +45,8 @@ func NewGridFromFile[T any](sc *bufio.Scanner, lineParseFn func(string) []T) (*G
 }
 
 func (g *Grid[T]) Do(f func(p Point, value T)) {
-	for x := 0; x < g.cols; x++ {
-		for y := 0; y < g.rows; y++ {
+	for x := range g.cols {
+		for y := range g.rows {
 			f(Point{X: x, Y: y}, g.cells[x*g.cols+y])
 		}
 	}
@@ -164,10 +165,10 @@ func (g *Grid[T]) dfs(p Point, visited *hashset.Set[Point], f func(p Point, valu
 	}
 }
 
-func (g *Grid[T]) BFS(p Point, f func(p Point, value T)) {
+func (g *Grid[T]) BFS(pt Point, f func(p Point, value T)) {
 	visited := make(map[Point]bool)
 	queue := arrayqueue.New[Point]()
-	queue.Enqueue(p)
+	queue.Enqueue(pt)
 
 	for queue.Size() > 0 {
 		p, ok := queue.Dequeue()

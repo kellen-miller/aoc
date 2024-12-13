@@ -3,12 +3,9 @@ package day2
 import (
 	"bufio"
 	"math"
-	"regexp"
 	"strconv"
 	"strings"
 )
-
-var locationIDsInputRegex = regexp.MustCompile(`^(\d+)\s+(\d+)$`)
 
 func (d *Day) Part1(sc *bufio.Scanner) (string, error) {
 	var safe int

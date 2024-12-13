@@ -7,8 +7,8 @@ import (
 )
 
 type location struct {
-	id    int
 	idStr string
+	id    int
 }
 
 func (d *Day) Part2(sc *bufio.Scanner) (string, error) {

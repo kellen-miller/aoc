@@ -32,9 +32,9 @@ func TestPart1(t *testing.T) {
 			require.NoError(t, err)
 
 			if got != tc.want && tc.want != "" {
-				t.Errorf("Part1 = %d; want %d", got, tc.want)
+				t.Errorf("Part1 = %s; want %s", got, tc.want)
 			} else {
-				t.Logf("Part1 = %d", got)
+				t.Logf("Part1 = %s", got)
 			}
 		})
 	}
@@ -65,9 +65,9 @@ func TestPart2(t *testing.T) {
 			require.NoError(t, err)
 
 			if got != tc.want && tc.want != "" {
-				t.Errorf("Part2 = %d; want %d", got, tc.want)
+				t.Errorf("Part2 = %s; want %s", got, tc.want)
 			} else {
-				t.Logf("Part2 = %d", got)
+				t.Logf("Part2 = %s", got)
 			}
 		})
 	}

@@ -416,6 +416,9 @@ issues:
       text: "unused-parameter:"
       linters:
         - revive
+    - path: "year\\.go|day\\.go"
+      linters:
+        - mnd
 
 severity:
   default-severity: error
