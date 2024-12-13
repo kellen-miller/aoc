@@ -34,7 +34,6 @@ linters:
     - funlen # tool for detection of long functions
     - ginkgolinter # [if you use ginkgo/gomega] enforces standards of using ginkgo and gomega
     - gocheckcompilerdirectives # validates go compiler directive comments (//go:)
-    - gochecknoglobals # checks that no global variables exist
     - gochecknoinits # checks that no init functions are present in Go code
     - gochecksumtype # checks that type switches on "sum types" in Go are exhaustive
     - gocognit # computes and checks the cognitive complexity of functions

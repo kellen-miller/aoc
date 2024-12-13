@@ -19,7 +19,7 @@ func StartOfPacket(input string) []int {
 	sc, closeFn := io.GetScanner(input)
 	defer closeFn()
 
-	var ps []int
+	var ps []int //nolint:prealloc // we don't know how many packets there are
 	for sc.Scan() {
 		ps = append(ps, findUniqueSetOfSize(sc.Text(), packetStartSize))
 	}

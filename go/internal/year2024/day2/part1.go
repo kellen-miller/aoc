@@ -23,35 +23,9 @@ func (d *Day) Part1(sc *bufio.Scanner) (string, error) {
 			continue
 		}
 
-		var (
-			isSafe    = true
-			ascending bool
-		)
-		for i, level := range levels {
-			if i == 0 {
-				continue
-			}
-
-			prevLevel, err := strconv.Atoi(levels[i-1])
-			if err != nil {
-				return "", err
-			}
-
-			currLevel, err := strconv.Atoi(level)
-			if err != nil {
-				return "", err
-			}
-
-			if i == 1 {
-				ascending = currLevel > prevLevel
-			}
-
-			if diff := math.Abs(float64(currLevel - prevLevel)); (diff < 1 || 3 < diff) ||
-				(ascending && prevLevel > currLevel) ||
-				(!ascending && currLevel > prevLevel) {
-				isSafe = false
-				break
-			}
+		isSafe, err := checkLevels(true, levels)
+		if err != nil {
+			return "", err
 		}
 
 		if isSafe {
@@ -64,4 +38,35 @@ func (d *Day) Part1(sc *bufio.Scanner) (string, error) {
 	}
 
 	return strconv.Itoa(safe), nil
+}
+
+func checkLevels(isSafe bool, levels []string) (bool, error) {
+	var ascending bool
+	for i, level := range levels {
+		if i == 0 {
+			continue
+		}
+
+		prevLevel, err := strconv.Atoi(levels[i-1])
+		if err != nil {
+			return false, err
+		}
+
+		currLevel, err := strconv.Atoi(level)
+		if err != nil {
+			return false, err
+		}
+
+		if i == 1 {
+			ascending = currLevel > prevLevel
+		}
+
+		if diff := math.Abs(float64(currLevel - prevLevel)); (diff < 1 || 3 < diff) ||
+			(ascending && prevLevel > currLevel) ||
+			(!ascending && currLevel > prevLevel) {
+			return false, nil
+		}
+	}
+
+	return isSafe, nil
 }

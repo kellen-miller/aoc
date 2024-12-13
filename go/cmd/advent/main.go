@@ -17,6 +17,8 @@ import (
 	"github.com/lmittmann/tint"
 )
 
+const all = "all"
+
 func main() {
 	slog.SetDefault(slog.New(
 		tint.NewHandler(os.Stderr, &tint.Options{
@@ -31,9 +33,9 @@ func main() {
 		partVal string
 	)
 
-	flag.StringVar(&yearVal, "year", "all", "year to run")
-	flag.StringVar(&dayVal, "day", "all", "day to run")
-	flag.StringVar(&partVal, "part", "all", "part to run")
+	flag.StringVar(&yearVal, "year", all, "year to run")
+	flag.StringVar(&dayVal, "day", all, "day to run")
+	flag.StringVar(&partVal, "part", all, "part to run")
 
 	flag.Parse()
 
@@ -43,7 +45,7 @@ func main() {
 	}
 
 	for _, adventYear := range adventYears {
-		if yearVal == "all" {
+		if yearVal == all {
 			if err := runYear(adventYear, dayVal, partVal); err != nil {
 				panic(err)
 			}
@@ -99,7 +101,7 @@ func runDay(adventDay internal.AdventDay, year int, day int, part string) error 
 		err      error
 	)
 	switch part {
-	case "all":
+	case all:
 		p1Result, err = adventDay.Part1(sc)
 		if err != nil {
 			break

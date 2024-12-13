@@ -11,4 +11,4 @@ tasks:
 
   go:lint:
     cmds:
-      - golangci-lint run go/... --config go/.golangci.yml --show-stats
+      - cd go && golangci-lint run  --config .golangci-lint.yaml --show-stats

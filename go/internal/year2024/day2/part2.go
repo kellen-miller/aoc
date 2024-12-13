@@ -7,7 +7,7 @@ import (
 )
 
 func (d *Day) Part2(sc *bufio.Scanner) (string, error) {
-	var input [][]int
+	var input [][]int //nolint:prealloc // We don't know the size of the input
 	for sc.Scan() {
 		row := strings.Fields(sc.Text())
 
@@ -57,7 +57,7 @@ func isLevelSafe(level []int, allowRemovals bool, isForward bool) bool {
 		}
 	}
 
-	for i := 0; i < len(indices)-1; i++ {
+	for i := range len(indices) - 1 {
 		var (
 			currentIndex = indices[i]
 			nextIndex    = indices[i+1]

@@ -50,7 +50,7 @@ func (d *Day) Part2(sc *bufio.Scanner) (string, error) {
 }
 
 func findLeftChar(line string) uint8 {
-	for i := 0; i < len(line); i++ {
+	for i := range len(line) {
 		if unicode.IsDigit(rune(line[i])) {
 			return line[i]
 		}

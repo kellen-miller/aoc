@@ -35,7 +35,7 @@ func findTotal(s string) (int, error) {
 
 	var total int
 	for _, match := range matches {
-		if len(match) != 3 {
+		if len(match) != 3 { //nolint:mnd // 3 is the expected length
 			return 0, fmt.Errorf("invalid match: %v", match)
 		}
 

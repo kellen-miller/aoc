@@ -17,7 +17,7 @@ func (d *Day) Part1(sc *bufio.Scanner) (string, error) {
 			right uint8
 		)
 
-		for i := 0; i < len(line); i++ {
+		for i := range len(line) {
 			if unicode.IsDigit(rune(line[i])) {
 				left = line[i]
 				break

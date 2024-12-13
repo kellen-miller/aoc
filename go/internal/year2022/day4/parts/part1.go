@@ -1,3 +1,4 @@
+//nolint:errcheck // package is outdated and not maintained
 package parts
 
 import (

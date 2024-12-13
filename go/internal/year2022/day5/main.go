@@ -1,3 +1,4 @@
+//nolint:forbidigo // this package is outdated and not worth updating
 package main
 
 import (

@@ -17,7 +17,7 @@ func StartOfMessage(input string) []int {
 	sc, closeFn := io.GetScanner(input)
 	defer closeFn()
 
-	var ms []int
+	var ms []int //nolint:prealloc // we don't know how many messages there are
 	for sc.Scan() {
 		ms = append(ms, findUniqueSetOfSize(sc.Text(), messageStartSize))
 	}

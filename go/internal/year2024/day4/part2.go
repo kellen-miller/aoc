@@ -16,7 +16,7 @@ var lowerDiagonals = [][]int{
 }
 
 func (d *Day) Part2(sc *bufio.Scanner) (string, error) {
-	var wordSearch [][]rune
+	var wordSearch [][]rune //nolint:prealloc // We don't know the size of the word search.
 	for sc.Scan() {
 		wordSearch = append(wordSearch, []rune(sc.Text()))
 	}
@@ -47,7 +47,7 @@ func checkIsXMAS(wordSearch [][]rune, i int, j int) bool {
 }
 
 func checkUpperDiagonalsForMS(wordSearch [][]rune, i int, j int) ([]rune, bool) {
-	var chars []rune
+	chars := make([]rune, 0, len(upperDiagonals))
 	for _, dir := range upperDiagonals {
 		if i+dir[0] < 0 || j+dir[1] < 0 || j+dir[1] >= len(wordSearch[i]) {
 			continue
@@ -61,7 +61,7 @@ func checkUpperDiagonalsForMS(wordSearch [][]rune, i int, j int) ([]rune, bool) 
 		chars = append(chars, char)
 	}
 
-	return chars, len(chars) == 2
+	return chars, len(chars) == 2 //nolint:mnd // Two upper diagonals set if both are 'M' or 'S'.
 }
 
 func checkDiagonalsNotEqual(wordSearch [][]rune, i int, j int, upperDiagonalChars []rune) bool {

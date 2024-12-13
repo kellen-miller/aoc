@@ -43,7 +43,7 @@ func (d *Day) Part1(sc *bufio.Scanner) (string, error) {
 			continue
 		}
 
-		middleIdx := len(pageUpdate) / 2
+		middleIdx := len(pageUpdate) / 2 //nolint:mnd // Middle index is calculated based on the length of the slice.
 		middlePage, err := strconv.Atoi(pageUpdate[middleIdx])
 		if err != nil {
 			return "", err

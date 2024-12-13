@@ -12,7 +12,7 @@ import (
 var locationIDsInputRegex = regexp.MustCompile(`^(\d+)\s+(\d+)$`)
 
 func (d *Day) Part1(sc *bufio.Scanner) (string, error) {
-	var (
+	var ( //nolint:prealloc // We don't know the length of the input
 		leftLocationsIDs  []int
 		rightLocationsIDs []int
 	)
@@ -46,7 +46,7 @@ func (d *Day) Part1(sc *bufio.Scanner) (string, error) {
 	}
 
 	var distance float64
-	for i := 0; i < len(leftLocationsIDs); i++ {
+	for i := range leftLocationsIDs {
 		distance += math.Abs(float64(leftLocationsIDs[i] - rightLocationsIDs[i]))
 	}
 

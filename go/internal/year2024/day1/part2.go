@@ -12,7 +12,7 @@ type location struct {
 }
 
 func (d *Day) Part2(sc *bufio.Scanner) (string, error) {
-	var (
+	var ( //nolint:prealloc // Preallocating is not possible here
 		leftLocations []location
 		frequencies   = make(map[string]int)
 	)

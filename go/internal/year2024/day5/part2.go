@@ -2,6 +2,7 @@ package day5
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -48,10 +49,10 @@ func (d *Day) Part2(sc *bufio.Scanner) (string, error) {
 
 		correctedUpdate, err := topologicalSort(pageUpdate, pageOrderRules)
 		if err != nil {
-			return "", fmt.Errorf("failed to reorder update %v: %v", pageUpdate, err)
+			return "", fmt.Errorf("failed to reorder update %v: %w", pageUpdate, err)
 		}
 
-		middleIdx := len(correctedUpdate) / 2
+		middleIdx := len(correctedUpdate) / 2 //nolint:mnd // Middle index is calculated based on the length of the slice.
 		middlePage, err := strconv.Atoi(correctedUpdate[middleIdx])
 		if err != nil {
 			return "", err
@@ -91,11 +92,11 @@ func topologicalSort(pageUpdate []string, pageOrderRules map[string][]string) ([
 		}
 	}
 
-	var sorted []string
+	sorted := make([]string, 0, queue.Size())
 	for !queue.Empty() {
 		current, ok := queue.Dequeue()
 		if !ok {
-			return nil, fmt.Errorf("queue is empty")
+			return nil, errors.New("queue is empty")
 		}
 
 		sorted = append(sorted, current)
@@ -108,7 +109,7 @@ func topologicalSort(pageUpdate []string, pageOrderRules map[string][]string) ([
 	}
 
 	if len(sorted) != len(pageUpdate) {
-		return nil, fmt.Errorf("cycle detected or missing rules")
+		return nil, errors.New("cycle detected or missing rules")
 	}
 
 	return sorted, nil

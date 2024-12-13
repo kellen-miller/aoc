@@ -17,7 +17,7 @@ var dirs = [][]int{
 }
 
 func (d *Day) Part1(sc *bufio.Scanner) (string, error) {
-	var wordSearch [][]rune
+	var wordSearch [][]rune //nolint:prealloc // Preallocating is not possible here
 	for sc.Scan() {
 		wordSearch = append(wordSearch, []rune(sc.Text()))
 	}

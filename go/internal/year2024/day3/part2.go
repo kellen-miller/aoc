@@ -2,6 +2,7 @@ package day3
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -18,37 +19,20 @@ func (d *Day) Part2(sc *bufio.Scanner) (string, error) {
 	for sc.Scan() {
 		matches := mulIfRegex.FindAllStringSubmatch(sc.Text(), -1)
 		if len(matches) == 0 {
-			return "", fmt.Errorf("no matches found")
+			return "", errors.New("no matches found")
 		}
 
 		for _, match := range matches {
-			if len(match) != 5 {
-				return "", fmt.Errorf("invalid match: %v", match)
-			}
-
-			if match[3] == "do()" {
-				enabled = true
-				continue
-			} else if match[4] == "don't()" {
-				enabled = false
-				continue
-			}
-
-			if !enabled {
-				continue
-			}
-
-			a, err := strconv.Atoi(match[1])
+			var (
+				mul int
+				err error
+			)
+			mul, enabled, err = checkMatch(match, enabled)
 			if err != nil {
 				return "", err
 			}
 
-			b, err := strconv.Atoi(match[2])
-			if err != nil {
-				return "", err
-			}
-
-			total += a * b
+			total += mul
 		}
 	}
 
@@ -59,6 +43,35 @@ func (d *Day) Part2(sc *bufio.Scanner) (string, error) {
 	return strconv.Itoa(total), nil
 }
 
+func checkMatch(match []string, enabled bool) (int, bool, error) {
+	if len(match) != 5 { //nolint:mnd // 5 is the expected length
+		return 0, enabled, fmt.Errorf("invalid match: %v", match)
+	}
+
+	if match[3] == "do()" {
+		return 0, true, nil
+	} else if match[4] == "don't()" {
+		return 0, false, nil
+	}
+
+	if !enabled {
+		return 0, enabled, nil
+	}
+
+	a, err := strconv.Atoi(match[1])
+	if err != nil {
+		return 0, enabled, err
+	}
+
+	b, err := strconv.Atoi(match[2])
+	if err != nil {
+		return 0, enabled, err
+	}
+
+	return a * b, enabled, nil
+}
+
+//nolint:unparam // The function signature must match the one in the internal package.
 func part2SplitCutRegex(sc *bufio.Scanner) (string, error) {
 	var program strings.Builder
 	for sc.Scan() {
