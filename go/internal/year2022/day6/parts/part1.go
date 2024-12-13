@@ -1,8 +1,8 @@
 package parts
 
 import (
-	"github.com/kellen-miller/advent-of-code/go/internal"
-	"github.com/kellen-miller/advent-of-code/go/pkg/io"
+	"github.com/kellen-miller/aoc/go/internal"
+	"github.com/kellen-miller/aoc/go/pkg/io"
 	hs "github.com/ugurcsen/gods-generic/sets/hashset"
 )
 

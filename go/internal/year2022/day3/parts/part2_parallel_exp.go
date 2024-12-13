@@ -3,8 +3,8 @@ package parts
 import (
 	"sync"
 
-	"github.com/kellen-miller/advent-of-code/go/internal"
-	"github.com/kellen-miller/advent-of-code/go/pkg/io"
+	"github.com/kellen-miller/aoc/go/internal"
+	"github.com/kellen-miller/aoc/go/pkg/io"
 )
 
 func BadgePriorityTotalParallelGroups(input string) int {

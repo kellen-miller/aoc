@@ -10,10 +10,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/kellen-miller/advent-of-code/go/internal"
-	"github.com/kellen-miller/advent-of-code/go/internal/year2023"
-	"github.com/kellen-miller/advent-of-code/go/internal/year2024"
-	"github.com/kellen-miller/advent-of-code/go/pkg/io"
+	"github.com/kellen-miller/aoc/go/internal"
+	"github.com/kellen-miller/aoc/go/internal/year2023"
+	"github.com/kellen-miller/aoc/go/internal/year2024"
+	"github.com/kellen-miller/aoc/go/pkg/io"
 	"github.com/lmittmann/tint"
 )
 

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/kellen-miller/advent-of-code/go/pkg/io"
+	"github.com/kellen-miller/aoc/go/pkg/io"
 )
 
 func FindValidParts(input string) int {

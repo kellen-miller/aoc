@@ -1,4 +1,4 @@
-module github.com/kellen-miller/advent-of-code/go
+module github.com/kellen-miller/aoc/go
 
 go 1.23
 

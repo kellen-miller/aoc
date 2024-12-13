@@ -3,8 +3,8 @@ package parts
 import (
 	"strings"
 
-	"github.com/kellen-miller/advent-of-code/go/internal"
-	"github.com/kellen-miller/advent-of-code/go/pkg/io"
+	"github.com/kellen-miller/aoc/go/internal"
+	"github.com/kellen-miller/aoc/go/pkg/io"
 )
 
 func OverlappingSections(input string) int {

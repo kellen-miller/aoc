@@ -1,8 +1,8 @@
 package year2023
 
 import (
-	"github.com/kellen-miller/advent-of-code/go/internal"
-	"github.com/kellen-miller/advent-of-code/go/internal/year2023/day1"
+	"github.com/kellen-miller/aoc/go/internal"
+	"github.com/kellen-miller/aoc/go/internal/year2023/day1"
 )
 
 type Year struct{}

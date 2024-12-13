@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/kellen-miller/advent-of-code/go/internal/year2022/day1/parts"
+	"github.com/kellen-miller/aoc/go/internal/year2022/day1/parts"
 )
 
 func main() {

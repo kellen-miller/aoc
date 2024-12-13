@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/kellen-miller/advent-of-code/go/internal"
-	"github.com/kellen-miller/advent-of-code/go/pkg/io"
+	"github.com/kellen-miller/aoc/go/internal"
+	"github.com/kellen-miller/aoc/go/pkg/io"
 	sll "github.com/ugurcsen/gods-generic/lists/singlylinkedlist"
 	lls "github.com/ugurcsen/gods-generic/stacks/linkedliststack"
 )

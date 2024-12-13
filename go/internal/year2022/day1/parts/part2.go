@@ -3,9 +3,9 @@ package parts
 import (
 	"strconv"
 
-	"github.com/kellen-miller/advent-of-code/go/internal"
-	"github.com/kellen-miller/advent-of-code/go/pkg/io"
-	"github.com/kellen-miller/advent-of-code/go/pkg/structures"
+	"github.com/kellen-miller/aoc/go/internal"
+	"github.com/kellen-miller/aoc/go/pkg/io"
+	"github.com/kellen-miller/aoc/go/pkg/structures"
 	"github.com/ugurcsen/gods-generic/trees/binaryheap"
 )
 

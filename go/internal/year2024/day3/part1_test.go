@@ -3,7 +3,7 @@ package day3
 import (
 	"testing"
 
-	"github.com/kellen-miller/advent-of-code/go/pkg/io"
+	"github.com/kellen-miller/aoc/go/pkg/io"
 	"github.com/stretchr/testify/require"
 )
 

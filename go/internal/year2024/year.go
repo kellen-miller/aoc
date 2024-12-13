@@ -1,11 +1,11 @@
 package year2024
 
 import (
-	"github.com/kellen-miller/advent-of-code/go/internal"
-	"github.com/kellen-miller/advent-of-code/go/internal/year2024/day1"
-	"github.com/kellen-miller/advent-of-code/go/internal/year2024/day2"
-	"github.com/kellen-miller/advent-of-code/go/internal/year2024/day3"
-	"github.com/kellen-miller/advent-of-code/go/internal/year2024/day4"
+	"github.com/kellen-miller/aoc/go/internal"
+	"github.com/kellen-miller/aoc/go/internal/year2024/day1"
+	"github.com/kellen-miller/aoc/go/internal/year2024/day2"
+	"github.com/kellen-miller/aoc/go/internal/year2024/day3"
+	"github.com/kellen-miller/aoc/go/internal/year2024/day4"
 )
 
 type Year struct{}
