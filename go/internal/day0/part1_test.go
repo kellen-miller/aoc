@@ -1,4 +1,4 @@
-package day4
+package day0
 
 import (
 	"testing"
@@ -8,17 +8,17 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestDay_Part2(t *testing.T) {
+func TestDay_Part1(t *testing.T) {
 	tcs := map[string]struct {
 		input string
 		want  string
 	}{
 		"example": {
-			input: "example2.txt",
+			input: "example1.txt",
 			want:  "",
 		},
 		"input": {
-			input: "input2.txt",
+			input: "input1.txt",
 			want:  "",
 		},
 	}
