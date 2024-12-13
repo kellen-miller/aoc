@@ -15,11 +15,11 @@ func TestDay_Part1(t *testing.T) {
 	}{
 		"example": {
 			input: "example1.txt",
-			want:  "",
+			want:  "143",
 		},
 		"input": {
 			input: "input1.txt",
-			want:  "",
+			want:  "5208",
 		},
 	}
 

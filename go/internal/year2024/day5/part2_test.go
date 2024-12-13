@@ -15,11 +15,11 @@ func TestDay_Part2(t *testing.T) {
 	}{
 		"example": {
 			input: "example2.txt",
-			want:  "",
+			want:  "123",
 		},
 		"input": {
 			input: "input2.txt",
-			want:  "",
+			want:  "6732",
 		},
 	}
 
@@ -28,7 +28,7 @@ func TestDay_Part2(t *testing.T) {
 			sc, closeFile := io.GetScanner(tc.input)
 			defer closeFile()
 
-			got, err := new(Day).Part1(sc)
+			got, err := new(Day).Part2(sc)
 			require.NoError(t, err)
 
 			assert.Equal(t, tc.want, got)
