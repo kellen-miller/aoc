@@ -1,8 +1,8 @@
 ### Custom
 
-./go/internal/**/input*.txt
-./go/internal/**/example*.txt
-./go/internal/**/problem.md
+go/**/input*.txt
+go/**/example*.txt
+go/**/problem.md
 
 ### JetBrains template
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
