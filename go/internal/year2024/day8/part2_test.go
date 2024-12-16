@@ -19,7 +19,7 @@ func TestDay_Part2(t *testing.T) {
 		},
 		"input": {
 			input: "input2.txt",
-			want:  "1026766857276279",
+			want:  "919",
 		},
 	}
 

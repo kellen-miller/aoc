@@ -30,13 +30,13 @@ func (d *Day) Part2(sc *bufio.Scanner) (string, error) {
 	return strconv.Itoa(createResonantAntinodes(antennaPairs, rows, cols).Size()), nil
 }
 
-func createResonantAntinodes(antennaPairs []UniqueAntennaPair, rows, cols int) *hashset.Set[grid.Point] {
+func createResonantAntinodes(antennaPairs []UniqueAntennaPair, rows int, cols int) *hashset.Set[grid.Point] {
 	var antinodes = hashset.New[grid.Point]()
 	for _, ap := range antennaPairs {
-		xDis, yDis := ap.Antenna2.Position.XYDistance(ap.Antenna1.Position)
+		disX, disY := ap.XYDistance()
 
-		a1Count := addAntinodes(ap.Antenna1, antinodes, rows, cols, xDis, yDis)
-		a2Count := addAntinodes(ap.Antenna2, antinodes, rows, cols, -xDis, -yDis)
+		a1Count := addAntinodes(ap.Antenna1, antinodes, rows, cols, disX, disY)
+		a2Count := addAntinodes(ap.Antenna2, antinodes, rows, cols, -disX, -disY)
 
 		if a1Count == 1 {
 			antinodes.Add(ap.Antenna1.Position)
@@ -60,8 +60,8 @@ func addAntinodes(
 	antinodes *hashset.Set[grid.Point],
 	rows int,
 	cols int,
-	xDis int,
-	yDis int,
+	disX int,
+	disY int,
 ) int {
 	var (
 		aX     = antenna.Position.X
@@ -69,8 +69,8 @@ func addAntinodes(
 		aCount int
 	)
 	for {
-		aX -= xDis
-		aY -= yDis
+		aX -= disX
+		aY -= disY
 
 		newPoint := grid.Point{X: aX, Y: aY}
 		if !newPoint.IsValid(rows, cols) {
