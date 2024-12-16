@@ -99,52 +99,42 @@ func runYear(adventYear advent.Year, dayVal string, partVal string) error {
 }
 
 func runDay(adventDay advent.Day, year int, day int, part string) error {
-	fp := filepath.Join("internal", "year"+strconv.Itoa(year), "day"+strconv.Itoa(day),
-		fmt.Sprintf("input%s.txt", part))
-	sc, closeFile := io.GetScanner(fp)
-	defer closeFile()
+	parts := []string{part}
+	if part == all {
+		parts = []string{"1", "2"}
+	}
 
-	var (
-		p1Result string
-		p2Result string
-		err      error
-	)
-	switch part {
-	case all:
-		p1Result, err = adventDay.Part1(sc)
+	for _, p := range parts {
+		fp := filepath.Join("internal", "year"+strconv.Itoa(year), "day"+strconv.Itoa(day),
+			fmt.Sprintf("input%s.txt", p))
+		sc, closeFile := io.GetScanner(fp)
+		var (
+			result string
+			err    error
+			stop   time.Time
+			start  = time.Now()
+		)
+		switch p {
+		case "1":
+			result, err = adventDay.Part1(sc)
+		case "2":
+			result, err = adventDay.Part2(sc)
+		default:
+			return errors.New("invalid part: " + p)
+		}
 		if err != nil {
-			break
+			closeFile()
+			return err
 		}
 
-		sc2, closeFile2 := io.GetScanner(fp)
-		defer closeFile2()
-
-		p2Result, err = adventDay.Part2(sc2)
-	case "1":
-		p1Result, err = adventDay.Part1(sc)
-	case "2":
-		p2Result, err = adventDay.Part2(sc)
-	default:
-		return errors.New("invalid part: " + part)
-	}
-	if err != nil {
-		return err
-	}
-
-	if p1Result != "" {
-		slog.Info(p1Result,
+		stop = time.Now()
+		slog.Info(result,
 			slog.Int("year", year),
 			slog.Int("day", day),
-			slog.String("part", "1"),
+			slog.String("part", p),
+			slog.Duration("duration", stop.Sub(start)),
 		)
-	}
-
-	if p2Result != "" {
-		slog.Info(p2Result,
-			slog.Int("year", year),
-			slog.Int("day", day),
-			slog.String("part", "2"),
-		)
+		closeFile()
 	}
 
 	return nil
