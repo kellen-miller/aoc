@@ -3,7 +3,7 @@ package parts
 import (
 	"strconv"
 
-	"github.com/kellen-miller/aoc/go/internal"
+	"github.com/kellen-miller/aoc/go/internal/year2022"
 	"github.com/kellen-miller/aoc/go/pkg/io"
 	"github.com/kellen-miller/aoc/go/pkg/structures"
 	"github.com/ugurcsen/gods-generic/trees/binaryheap"
@@ -15,7 +15,7 @@ const (
 
 func Top3Calories(input string) ([]int, int) {
 	if input == "" {
-		input = internal.Input
+		input = year2022.Input
 	}
 
 	sc, closeFile := io.GetScanner(input)

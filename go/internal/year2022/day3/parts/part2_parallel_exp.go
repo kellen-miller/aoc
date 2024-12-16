@@ -4,13 +4,13 @@ package parts
 import (
 	"sync"
 
-	"github.com/kellen-miller/aoc/go/internal"
+	"github.com/kellen-miller/aoc/go/internal/year2022"
 	"github.com/kellen-miller/aoc/go/pkg/io"
 )
 
 func BadgePriorityTotalParallelGroups(input string) int {
 	if input == "" {
-		input = internal.Input
+		input = year2022.Input
 	}
 
 	sc, closeFile := io.GetScanner(input)
@@ -48,7 +48,7 @@ func BadgePriorityTotalParallelGroups(input string) int {
 
 func BadgePriorityTotalChannels(input string) int {
 	if input == "" {
-		input = internal.Input
+		input = year2022.Input
 	}
 
 	sc, closeFile := io.GetScanner(input)

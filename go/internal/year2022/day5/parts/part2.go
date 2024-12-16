@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/kellen-miller/aoc/go/internal"
+	"github.com/kellen-miller/aoc/go/internal/year2022"
 	"github.com/kellen-miller/aoc/go/pkg/io"
 	sll "github.com/ugurcsen/gods-generic/lists/singlylinkedlist"
 	lls "github.com/ugurcsen/gods-generic/stacks/linkedliststack"
@@ -14,7 +14,7 @@ import (
 
 func RearrangeCratesMulti(input string) string {
 	if input == "" {
-		input = internal.Input
+		input = year2022.Input
 	}
 
 	sc, closeFn := io.GetScanner(input)

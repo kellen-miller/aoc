@@ -1,7 +1,7 @@
-package day3
+package day6
 
 type Day struct{}
 
 func (d *Day) AdventDay() int {
-	return 3
+	return 6
 }

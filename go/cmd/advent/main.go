@@ -11,8 +11,7 @@ import (
 	"time"
 
 	"github.com/kellen-miller/aoc/go/internal"
-	"github.com/kellen-miller/aoc/go/internal/year2023"
-	"github.com/kellen-miller/aoc/go/internal/year2024"
+	"github.com/kellen-miller/aoc/go/internal/advent"
 	"github.com/kellen-miller/aoc/go/pkg/io"
 	"github.com/lmittmann/tint"
 )
@@ -39,17 +38,14 @@ func main() {
 
 	flag.Parse()
 
-	adventYears := []internal.AdventYear{
-		new(year2023.Year),
-		new(year2024.Year),
-	}
-
-	for _, adventYear := range adventYears {
+	var foundYear bool
+	for _, adventYear := range internal.Years() {
 		if yearVal == all {
 			if err := runYear(adventYear, dayVal, partVal); err != nil {
 				panic(err)
 			}
 
+			foundYear = true
 			continue
 		}
 
@@ -58,21 +54,29 @@ func main() {
 			panic(err)
 		}
 
-		if adventYear.Year() == yearInt {
+		if adventYear.AdventYear() == yearInt {
 			if err := runYear(adventYear, dayVal, partVal); err != nil {
 				panic(err)
 			}
+
+			foundYear = true
 		}
+	}
+
+	if !foundYear {
+		panic("year not found or not registered")
 	}
 }
 
-func runYear(adventYear internal.AdventYear, dayVal string, partVal string) error {
+func runYear(adventYear advent.Year, dayVal string, partVal string) error {
+	var foundDay bool
 	for _, adventDay := range adventYear.AdventDays() {
-		if dayVal == "all" {
-			if err := runDay(adventDay, adventYear.Year(), adventDay.Day(), partVal); err != nil {
+		if dayVal == all {
+			if err := runDay(adventDay, adventYear.AdventYear(), adventDay.AdventDay(), partVal); err != nil {
 				return err
 			}
 
+			foundDay = true
 			continue
 		}
 
@@ -81,15 +85,20 @@ func runYear(adventYear internal.AdventYear, dayVal string, partVal string) erro
 			return err
 		}
 
-		if adventDay.Day() == dayInt {
-			return runDay(adventDay, adventYear.Year(), adventDay.Day(), partVal)
+		if adventDay.AdventDay() == dayInt {
+			foundDay = true
+			return runDay(adventDay, adventYear.AdventYear(), adventDay.AdventDay(), partVal)
 		}
+	}
+
+	if !foundDay {
+		return errors.New("day not found or not registered")
 	}
 
 	return nil
 }
 
-func runDay(adventDay internal.AdventDay, year int, day int, part string) error {
+func runDay(adventDay advent.Day, year int, day int, part string) error {
 	fp := filepath.Join("internal", "year"+strconv.Itoa(year), "day"+strconv.Itoa(day),
 		fmt.Sprintf("input%s.txt", part))
 	sc, closeFile := io.GetScanner(fp)

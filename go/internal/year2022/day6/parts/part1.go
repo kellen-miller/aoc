@@ -1,7 +1,7 @@
 package parts
 
 import (
-	"github.com/kellen-miller/aoc/go/internal"
+	"github.com/kellen-miller/aoc/go/internal/year2022"
 	"github.com/kellen-miller/aoc/go/pkg/io"
 	hs "github.com/ugurcsen/gods-generic/sets/hashset"
 )
@@ -13,7 +13,7 @@ const (
 
 func StartOfPacket(input string) []int {
 	if input == "" {
-		input = internal.Input
+		input = year2022.Input
 	}
 
 	sc, closeFn := io.GetScanner(input)

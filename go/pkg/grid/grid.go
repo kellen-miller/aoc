@@ -21,11 +21,15 @@ func NewGrid[T any](cols int, rows int) *Grid[T] {
 	}
 }
 
-func NewGridFromFile[T any](sc *bufio.Scanner, lineParseFn func(string) []T) (*Grid[T], error) {
+func NewGridFromFile[T any](sc *bufio.Scanner, lineParseFn func(line string, row int) []T) (*Grid[T], error) {
 	//nolint: prealloc // We don't know the size of the grid yet
-	var rows [][]T
+	var (
+		rows [][]T
+		i    int
+	)
 	for sc.Scan() {
-		rows = append(rows, lineParseFn(sc.Text()))
+		rows = append(rows, lineParseFn(sc.Text(), i))
+		i++
 	}
 
 	if err := sc.Err(); err != nil {

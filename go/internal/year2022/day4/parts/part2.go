@@ -3,13 +3,13 @@ package parts
 import (
 	"strings"
 
-	"github.com/kellen-miller/aoc/go/internal"
+	"github.com/kellen-miller/aoc/go/internal/year2022"
 	"github.com/kellen-miller/aoc/go/pkg/io"
 )
 
 func OverlappingSections(input string) int {
 	if input == "" {
-		input = internal.Input
+		input = year2022.Input
 	}
 
 	sc, closeFile := io.GetScanner(input)

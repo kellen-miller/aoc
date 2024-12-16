@@ -2,6 +2,6 @@ package day3
 
 type Day struct{}
 
-func (d *Day) Day() int {
+func (d *Day) AdventDay() int {
 	return 3
 }
