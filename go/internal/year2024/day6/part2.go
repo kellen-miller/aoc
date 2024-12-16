@@ -11,12 +11,6 @@ import (
 
 const maxGoroutines = 1000
 
-type JumpValue struct {
-	NextPos      grid.Point
-	NewDir       grid.Direction
-	LoopDetected bool
-}
-
 func (d *Day) Part2(sc *bufio.Scanner) (string, error) {
 	var (
 		lab           = make(map[grid.Point]rune)
@@ -37,16 +31,6 @@ func (d *Day) Part2(sc *bufio.Scanner) (string, error) {
 
 	if err := sc.Err(); err != nil {
 		return "", err
-	}
-
-	width, height := 0, row
-	for pos := range lab {
-		if pos.X+1 > width {
-			width = pos.X + 1
-		}
-		if pos.Y+1 > height {
-			height = pos.Y + 1
-		}
 	}
 
 	return strconv.Itoa(obstaclePositionCausesLoop(lab, GuardState{
