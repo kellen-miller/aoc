@@ -1,4 +1,4 @@
-package day7
+package day8
 
 import (
 	"testing"
@@ -8,18 +8,18 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestDay_Part2(t *testing.T) {
+func TestDay_Part1(t *testing.T) {
 	tcs := map[string]struct {
 		input string
 		want  string
 	}{
 		"example": {
-			input: "example2.txt",
-			want:  "11387",
+			input: "example1.txt",
+			want:  "14",
 		},
 		"input": {
-			input: "input2.txt",
-			want:  "1026766857276279",
+			input: "input1.txt",
+			want:  "42283209483350",
 		},
 	}
 
@@ -28,7 +28,7 @@ func TestDay_Part2(t *testing.T) {
 			sc, closeFile := io.GetScanner(tc.input)
 			defer closeFile()
 
-			got, err := new(Day).Part2(sc)
+			got, err := new(Day).Part1(sc)
 			require.NoError(t, err)
 
 			assert.Equal(t, tc.want, got)

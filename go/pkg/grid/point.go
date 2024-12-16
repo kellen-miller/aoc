@@ -1,5 +1,7 @@
 package grid
 
+import "math"
+
 type Direction int
 
 const (
@@ -58,4 +60,16 @@ func (p Point) Left() Point {
 
 func (p Point) Right() Point {
 	return Point{X: p.X + 1, Y: p.Y}
+}
+
+func (p Point) ManhattanDistance(other Point) int {
+	return int(math.Abs(float64(p.X-other.X)) + math.Abs(float64(p.Y-other.Y)))
+}
+
+func (p Point) XYDistance(other Point) (int, int) {
+	return p.X - other.X, p.Y - other.Y
+}
+
+func (p Point) IsValid(rows int, cols int) bool {
+	return p.X >= 0 && p.Y >= 0 && p.X < cols && p.Y < rows
 }

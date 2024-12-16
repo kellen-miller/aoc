@@ -9,6 +9,7 @@ import (
 	"github.com/kellen-miller/aoc/go/internal/year2024/day5"
 	"github.com/kellen-miller/aoc/go/internal/year2024/day6"
 	"github.com/kellen-miller/aoc/go/internal/year2024/day7"
+	"github.com/kellen-miller/aoc/go/internal/year2024/day8"
 )
 
 type Year struct{}
@@ -26,5 +27,6 @@ func (y *Year) AdventDays() []advent.Day {
 		new(day5.Day),
 		new(day6.Day),
 		new(day7.Day),
+		new(day8.Day),
 	}
 }

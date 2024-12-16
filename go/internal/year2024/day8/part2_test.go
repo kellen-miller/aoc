@@ -1,4 +1,4 @@
-package day7
+package day8
 
 import (
 	"testing"
@@ -15,7 +15,7 @@ func TestDay_Part2(t *testing.T) {
 	}{
 		"example": {
 			input: "example2.txt",
-			want:  "11387",
+			want:  "34",
 		},
 		"input": {
 			input: "input2.txt",
