@@ -8,12 +8,12 @@ import (
 )
 
 type Equation struct {
-	Answer  int
 	Numbers []int
+	Answer  int
 }
 
 func (d *Day) Part1(sc *bufio.Scanner) (string, error) {
-	var equations []*Equation
+	var equations []*Equation //nolint:prealloc // unknown length
 	for sc.Scan() {
 		eq, err := parseLine(sc.Text())
 		if err != nil {
@@ -68,11 +68,7 @@ func parseLine(line string) (*Equation, error) {
 
 func dp1(target int, numbers []int, total int, idx int) bool {
 	if idx >= len(numbers) {
-		if total == target {
-			return true
-		}
-
-		return false
+		return total == target
 	}
 
 	return dp1(target, numbers, total+numbers[idx], idx+1) ||

@@ -86,7 +86,6 @@ func runYear(adventYear advent.Year, dayVal string, partVal string) error {
 		}
 
 		if adventDay.AdventDay() == dayInt {
-			foundDay = true
 			return runDay(adventDay, adventYear.AdventYear(), adventDay.AdventDay(), partVal)
 		}
 	}

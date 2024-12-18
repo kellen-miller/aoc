@@ -6,7 +6,7 @@ import (
 )
 
 func (d *Day) Part2(sc *bufio.Scanner) (string, error) {
-	var equations []*Equation
+	var equations []*Equation //nolint:prealloc // unknown length
 	for sc.Scan() {
 		eq, err := parseLine(sc.Text())
 		if err != nil {
@@ -32,11 +32,7 @@ func (d *Day) Part2(sc *bufio.Scanner) (string, error) {
 
 func dp2(target int, numbers []int, total int, idx int) bool {
 	if idx >= len(numbers) {
-		if total == target {
-			return true
-		}
-
-		return false
+		return total == target
 	}
 
 	return dp2(target, numbers, concat(total, numbers[idx]), idx+1) || // concatenation

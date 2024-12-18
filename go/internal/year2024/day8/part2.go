@@ -31,7 +31,7 @@ func (d *Day) Part2(sc *bufio.Scanner) (string, error) {
 }
 
 func createResonantAntinodes(antennaPairs []UniqueAntennaPair, rows int, cols int) *hashset.Set[grid.Point] {
-	var antinodes = hashset.New[grid.Point]()
+	antinodes := hashset.New[grid.Point]()
 	for _, ap := range antennaPairs {
 		disX, disY := ap.XYDistance()
 
