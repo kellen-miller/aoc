@@ -38,103 +38,119 @@ func main() {
 
 	flag.Parse()
 
-	var foundYear bool
-	for _, adventYear := range internal.Years() {
-		if yearVal == all {
-			if err := runYear(adventYear, dayVal, partVal); err != nil {
-				panic(err)
-			}
-
-			foundYear = true
-			continue
-		}
-
-		yearInt, err := strconv.Atoi(yearVal)
-		if err != nil {
-			panic(err)
-		}
-
-		if adventYear.AdventYear() == yearInt {
-			if err := runYear(adventYear, dayVal, partVal); err != nil {
-				panic(err)
-			}
-
-			foundYear = true
-		}
-	}
-
-	if !foundYear {
-		panic("year not found or not registered")
+	if err := runAdvent(yearVal, dayVal, partVal); err != nil {
+		slog.Error("failure during advent run", slog.String("error", err.Error()))
+		os.Exit(1)
 	}
 }
 
-func runYear(adventYear advent.Year, dayVal string, partVal string) error {
-	var foundDay bool
-	for _, adventDay := range adventYear.AdventDays() {
-		if dayVal == all {
-			if err := runDay(adventDay, adventYear.AdventYear(), adventDay.AdventDay(), partVal); err != nil {
-				return err
-			}
-
-			foundDay = true
+func runAdvent(year string, day string, part string) error {
+	var (
+		allYears   = internal.Years()
+		yearsToRun = make([]advent.Year, 0, len(allYears))
+	)
+	for _, y := range allYears {
+		if year == all {
+			yearsToRun = append(yearsToRun, y)
 			continue
 		}
 
-		dayInt, err := strconv.Atoi(dayVal)
+		yearInt, err := strconv.Atoi(year)
 		if err != nil {
 			return err
 		}
 
-		if adventDay.AdventDay() == dayInt {
-			return runDay(adventDay, adventYear.AdventYear(), adventDay.AdventDay(), partVal)
+		if y.AdventYear() == yearInt {
+			yearsToRun = append(yearsToRun, y)
 		}
 	}
 
-	if !foundDay {
-		return errors.New("day not found or not registered")
+	if len(yearsToRun) == 0 {
+		return errors.New("year not found or not registered")
+	}
+
+	for _, adventYear := range yearsToRun {
+		if err := runYear(adventYear, day, part); err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
 
-func runDay(adventDay advent.Day, year int, day int, part string) error {
+func runYear(year advent.Year, day string, part string) error {
+	var (
+		allDays   = year.AdventDays()
+		daysToRun = make([]advent.Day, 0, len(allDays))
+	)
+	for _, d := range allDays {
+		if day == all {
+			daysToRun = append(daysToRun, d)
+			continue
+		}
+
+		dayInt, err := strconv.Atoi(day)
+		if err != nil {
+			return err
+		}
+
+		if d.AdventDay() == dayInt {
+			daysToRun = append(daysToRun, d)
+		}
+	}
+
+	if len(daysToRun) == 0 {
+		return errors.New("day not found or not registered")
+	}
+
+	for _, adventDay := range daysToRun {
+		if err := runDay(year.AdventYear(), adventDay, part); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func runDay(year int, day advent.Day, part string) error {
 	parts := []string{part}
 	if part == all {
 		parts = []string{"1", "2"}
 	}
 
 	for _, p := range parts {
-		fp := filepath.Join("internal", "year"+strconv.Itoa(year), "day"+strconv.Itoa(day),
-			fmt.Sprintf("input%s.txt", p))
-		sc, closeFile := io.GetScanner(fp)
-		var (
-			result string
-			err    error
-			stop   time.Time
-			start  = time.Now()
-		)
-		switch p {
-		case "1":
-			result, err = adventDay.Part1(sc)
-		case "2":
-			result, err = adventDay.Part2(sc)
-		default:
-			return errors.New("invalid part: " + p)
-		}
+		start := time.Now()
+
+		result, err := execDay(year, day, p)
 		if err != nil {
-			closeFile()
 			return err
 		}
 
-		stop = time.Now()
 		slog.Info(result,
 			slog.Int("year", year),
-			slog.Int("day", day),
+			slog.Int("day", day.AdventDay()),
 			slog.String("part", p),
-			slog.Duration("duration", stop.Sub(start)),
+			slog.Duration("duration", time.Now().Sub(start)),
 		)
-		closeFile()
 	}
 
 	return nil
+}
+
+func execDay(year int, day advent.Day, part string) (string, error) {
+	sc, closeFile := io.GetScanner(filepath.Join(
+		"internal",
+		"year"+strconv.Itoa(year),
+		"day"+strconv.Itoa(day.AdventDay()),
+		fmt.Sprintf("input%s.txt", part)))
+	defer closeFile()
+
+	switch part {
+	case "1":
+		return day.Part1(sc)
+	case "2":
+		return day.Part2(sc)
+	default:
+		return "", errors.New("invalid part: " + part)
+	}
 }
