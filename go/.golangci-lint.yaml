@@ -29,11 +29,13 @@ linters:
     - errname # checks that sentinel errors are prefixed with the Err and error types are suffixed with the Error
     - errorlint # finds code that will cause problems with the error wrapping scheme introduced in Go 1.13
     - exhaustive # checks exhaustiveness of enum switch statements
+    - exptostd # detects functions from golang.org/x/exp/ that can be replaced by std functions
     - fatcontext # detects potential fat contexts in loops. They can lead to performance issues, as documented here: https://gabnotes.org/fat-contexts/
     - forbidigo # forbids identifiers
     - funlen # tool for detection of long functions
     - ginkgolinter # [if you use ginkgo/gomega] enforces standards of using ginkgo and gomega
     - gocheckcompilerdirectives # validates go compiler directive comments (//go:)
+    - gochecknoglobals # checks that no global variables exist
     - gochecknoinits # checks that no init functions are present in Go code
     - gochecksumtype # checks that type switches on "sum types" in Go are exhaustive
     - gocognit # computes and checks the cognitive complexity of functions
@@ -67,6 +69,7 @@ linters:
     - nakedret # finds naked returns in functions greater than a specified function length
     - nestif # reports deeply nested if statements
     - nilerr # finds the code that returns nil even if it checks that the error is not nil
+    - nilnesserr # detects returns with an unrelated/nil-values error.
     - nilnil # checks that there is no simultaneous return of nil error and an invalid value
     - noctx # finds sending routes request without context.Context
     - nolintlint # reports ill-formed or insufficient nolint directives
@@ -97,6 +100,7 @@ linters:
     - unparam # reports unused function parameters
     - unused # checks for unused constants, variables, functions and types
     - usestdlibvars # detects the possibility to use variables/constants from the Go standard library
+    - usetesting # detects when some calls can be replaced by methods from the testing package.
     - wastedassign # finds wasted assignment statements
     - whitespace # detects leading and trailing whitespace
     - zerologlint # detects the wrong usage of zerolog that a user forgets to dispatch zerolog.Event
