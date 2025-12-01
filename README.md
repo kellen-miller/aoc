@@ -30,3 +30,10 @@ task run -- --year 2023 --lang go
 - [go](languages/go/)
 
 > ℹ️ Adding a new Go day? Run `go generate ./languages/go/cmd/advent` (or `task run` which does it for you) so the runner picks it up automatically.
+
+### Scaffolding Go Days
+
+```bash
+# Create 2024/day12 from the template and refresh the registry
+task go:new-day YEAR=2024 DAY=12
+```

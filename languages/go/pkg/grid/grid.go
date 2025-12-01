@@ -2,6 +2,7 @@ package grid
 
 import (
 	"bufio"
+	"fmt"
 
 	"github.com/ugurcsen/gods-generic/queues/arrayqueue"
 	"github.com/ugurcsen/gods-generic/sets/hashset"
@@ -33,7 +34,7 @@ func NewGridFromFile[T any](sc *bufio.Scanner, lineParseFn func(line string, row
 	}
 
 	if err := sc.Err(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("scan grid input: %w", err)
 	}
 
 	cols := len(rows[0])

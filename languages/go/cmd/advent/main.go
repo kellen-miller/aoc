@@ -95,7 +95,7 @@ func selectYears(arg string) ([]int, error) {
 
 	year, err := strconv.Atoi(arg)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("parse year %q: %w", arg, err)
 	}
 
 	if _, ok := solutionIndex[year]; !ok {
@@ -117,7 +117,7 @@ func selectDays(year int, arg string) ([]int, error) {
 
 	day, err := strconv.Atoi(arg)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("parse day %q: %w", arg, err)
 	}
 
 	if _, ok := daysForYear[day]; !ok {

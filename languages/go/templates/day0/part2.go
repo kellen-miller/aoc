@@ -2,6 +2,7 @@ package day0
 
 import (
 	"bufio"
+	"fmt"
 )
 
 func Part2(sc *bufio.Scanner) (string, error) {
@@ -10,7 +11,7 @@ func Part2(sc *bufio.Scanner) (string, error) {
 	}
 
 	if err := sc.Err(); err != nil {
-		return "", err
+		return "", fmt.Errorf("read input: %w", err)
 	}
 
 	return "", nil

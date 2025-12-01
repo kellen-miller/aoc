@@ -2,7 +2,7 @@ package io
 
 import (
 	"bufio"
-	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 )
@@ -25,7 +25,7 @@ func OpenFile(inputPath string) (*os.File, func()) {
 
 	closeFunc := func() {
 		if err := file.Close(); err != nil {
-			log.Println(err.Error())
+			slog.Error("close input file", slog.String("path", fullPath), slog.String("error", err.Error()))
 		}
 	}
 
