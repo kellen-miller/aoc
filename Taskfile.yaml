@@ -2,42 +2,37 @@ version: '3'
 
 tasks:
   run:
+    vars:
+      YEAR: '{{default "" .YEAR}}'
+      DAY: '{{default "" .DAY}}'
+      PART: '{{default "" .PART}}'
+      LANGUAGE: '{{default "" .LANGUAGE}}'
     cmds:
       - go generate ./languages/go/cmd/advent
-      - go run ./cmd/run {{.CLI_ARGS}}
-    desc: Run Advent of Code solutions (use --year/--day/--part/--lang flags after --)
+      - >
+        go run ./cmd/run
+        {{- if .YEAR}} --year {{.YEAR}}{{end -}}
+        {{- if .DAY}} --day {{.DAY}}{{end -}}
+        {{- if .PART}} --part {{.PART}}{{end -}}
+        {{- if .LANGUAGE}} --lang {{.LANGUAGE}}{{end -}}
+    desc: "Run Advent of Code solutions (use YEAR=/DAY=/PART=/LANGUAGE= variables)"
 
   go:lint:
     cmds:
       - cd languages/go && golangci-lint run --config .golangci-lint.yaml
 
-  go:new-day:
-    desc: "Scaffold a new Go day (usage: task go:new-day YEAR=2024 DAY=12)"
+  new-day:
+    desc: "Scaffold a new day from templates (usage: task new-day YEAR=2024 DAY=12 [LANGUAGE=go])"
+    silent: true
     vars:
       YEAR: '{{.YEAR}}'
       DAY: '{{.DAY}}'
+      LANGUAGE: '{{default "go" .LANGUAGE}}'
     cmds:
       - |
         set -euo pipefail
         if [ -z "{{.YEAR}}" ] || [ -z "{{.DAY}}" ]; then
-          echo "error: provide YEAR and DAY (e.g. task go:new-day YEAR=2024 DAY=12)"
+          echo "error: provide YEAR and DAY (e.g. task new-day YEAR=2024 DAY=12 LANGUAGE=go)"
           exit 1
         fi
-        if ! [[ "{{.DAY}}" =~ ^[0-9]+$ ]]; then
-          echo "error: DAY must be numeric"
-          exit 1
-        fi
-        YEAR_DIR="{{.YEAR}}/go"
-        DAY_NUM=$((10#{{.DAY}}))
-        DAY_NAME="day${DAY_NUM}"
-        DAY_DIR="$YEAR_DIR/$DAY_NAME"
-        if [ -d "$DAY_DIR" ]; then
-          echo "error: $DAY_DIR already exists"
-          exit 1
-        fi
-        mkdir -p "$YEAR_DIR"
-        cp -R languages/go/templates/day0 "$DAY_DIR"
-        find "$DAY_DIR" -type f -name '*.go' -print0 | xargs -0 perl -pi -e "s/day0/$DAY_NAME/g"
-        touch "$DAY_DIR/input1.txt" "$DAY_DIR/example1.txt"
-        gofmt -w "$DAY_DIR"
-        go generate ./languages/go/cmd/advent
+        go run ./cmd/newday --year {{.YEAR}} --day {{.DAY}} --lang {{.LANGUAGE}}

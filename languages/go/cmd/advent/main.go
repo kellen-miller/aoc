@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"flag"
 	"fmt"
 	"log/slog"
@@ -11,7 +12,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/kellen-miller/aoc/languages/go/pkg/io"
 	"github.com/lmittmann/tint"
 )
 
@@ -159,7 +159,15 @@ func runDay(year, day int, parts []string) error {
 
 		start := time.Now()
 
-		result, err := execPart(year, day, part, fn)
+		result, skipped, err := execPart(year, day, part, fn)
+		if skipped {
+			slog.Warn(result,
+				slog.Int("year", year),
+				slog.Int("day", day),
+				slog.String("part", part),
+			)
+			continue
+		}
 		if err != nil {
 			return err
 		}
@@ -175,16 +183,44 @@ func runDay(year, day int, parts []string) error {
 	return nil
 }
 
-func execPart(year, day int, part string, fn partRunner) (string, error) {
-	sc, closeFile := io.GetScanner(filepath.Join(
+func execPart(year, day int, part string, fn partRunner) (string, bool, error) {
+	inputPath := filepath.Join(
 		strconv.Itoa(year),
 		"go",
-		"day"+strconv.Itoa(day),
+		fmt.Sprintf("day%d", day),
 		fmt.Sprintf("input%s.txt", part),
-	))
+	)
+
+	sc, closeFile, err := openInputScanner(inputPath)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return "missing input file: " + inputPath, true, nil
+		}
+		return "", false, err
+	}
 	defer closeFile()
 
-	return fn(sc)
+	result, err := fn(sc)
+	return result, false, err
+}
+
+func openInputScanner(path string) (*bufio.Scanner, func(), error) {
+	if !filepath.IsAbs(path) {
+		path = filepath.Clean(path)
+	}
+
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, nil, fmt.Errorf("open input %s: %w", path, err)
+	}
+
+	closeFunc := func() {
+		if cerr := file.Close(); cerr != nil {
+			slog.Warn("close input file", slog.String("path", path), slog.String("error", cerr.Error()))
+		}
+	}
+
+	return bufio.NewScanner(file), closeFunc, nil
 }
 
 func sortedYearKeys(m map[int]map[int]dayRunners) []int {
