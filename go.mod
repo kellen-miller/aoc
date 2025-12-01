@@ -1,10 +1,10 @@
 module github.com/kellen-miller/aoc
 
-go 1.23
+go 1.25
 
 require (
-	github.com/lmittmann/tint v1.0.5
-	github.com/stretchr/testify v1.10.0
+	github.com/lmittmann/tint v1.1.2
+	github.com/stretchr/testify v1.11.1
 	github.com/ugurcsen/gods-generic v0.10.4
 )
 
