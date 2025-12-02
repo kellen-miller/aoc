@@ -9,6 +9,7 @@ import (
 
 func Part1(sc *bufio.Scanner) (string, error) {
 	var invalidTotal int
+
 	for sc.Scan() {
 		idRanges := strings.Split(sc.Text(), ",")
 		if len(idRanges) == 0 {
