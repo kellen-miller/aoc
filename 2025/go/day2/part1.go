@@ -33,7 +33,7 @@ func Part1(sc *bufio.Scanner) (string, error) {
 			}
 
 			for i := firstID; i <= lastID; i++ {
-				if !validateID(strconv.Itoa(i)) {
+				if !part1ValidateID(strconv.Itoa(i)) {
 					invalidTotal += i
 				}
 			}
@@ -47,7 +47,7 @@ func Part1(sc *bufio.Scanner) (string, error) {
 	return strconv.Itoa(invalidTotal), nil
 }
 
-func validateID(id string) bool {
+func part1ValidateID(id string) bool {
 	if len(id) == 0 { // empty
 		return false
 	}
