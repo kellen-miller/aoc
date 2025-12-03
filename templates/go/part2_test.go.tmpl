@@ -14,25 +14,27 @@ func TestPart2(t *testing.T) {
         want  string
     }{
         "example": {
-            input: "example1.txt",
+            input: "example2.txt",
             want:  "",
         },
         "input": {
-            input: "input1.txt",
+            input: "input2.txt",
             want:  "",
         },
     }
 
     for name, tc := range tcs {
         t.Run(name, func(t *testing.T) {
-            if tc.want == "" {
-                t.Skip()
-            }
-
             sc, closeFile := io.GetScanner(tc.input)
             defer closeFile()
 
             got, err := Part2(sc)
+
+            if name == "input" && tc.want == "" {
+                t.Logf("got %s", got)
+                return
+            }
+
             require.NoError(t, err)
             assert.Equal(t, tc.want, got)
         })

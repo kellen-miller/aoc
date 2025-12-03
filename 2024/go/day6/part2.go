@@ -2,6 +2,7 @@ package day6
 
 import (
 	"bufio"
+	"maps"
 	"strconv"
 	"sync"
 
@@ -64,9 +65,7 @@ func obstaclePositionCausesLoop(lab map[grid.Point]rune, state GuardState) int {
 			defer func() { <-semaphore }()
 
 			labCopy := make(map[grid.Point]rune, len(lab))
-			for pos, char := range lab {
-				labCopy[pos] = char
-			}
+			maps.Copy(labCopy, lab)
 
 			labCopy[obstaclePos] = obstacle
 

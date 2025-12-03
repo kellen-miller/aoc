@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"flag"
 	"fmt"
@@ -13,16 +14,23 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
+	"time"
+)
+
+const (
+	secureDirPerm  = 0o750
+	secureFilePerm = 0o600
+	commandTimeout = 30 * time.Second
 )
 
 type templateData struct {
-	Year        int
 	YearString  string
-	Day         int
 	DayString   string
 	DayPadded   string
 	PackageName string
 	Language    string
+	Year        int
+	Day         int
 }
 
 func main() {
@@ -64,7 +72,7 @@ func run(year, day int, lang string) error {
 		return err
 	}
 
-	if err := os.MkdirAll(destDir, 0o755); err != nil {
+	if err := ensureSecureDir(destDir); err != nil {
 		return fmt.Errorf("create destination: %w", err)
 	}
 
@@ -78,7 +86,7 @@ func run(year, day int, lang string) error {
 		Language:    lang,
 	}
 
-	generatedFiles, err := hydrateTemplates(templateDir, destDir, data)
+	generatedFiles, err := hydrateTemplates(templateDir, destDir, &data)
 	if err != nil {
 		return err
 	}
@@ -100,9 +108,9 @@ type generatedSet struct {
 	goFiles []string
 }
 
-func hydrateTemplates(templateDir, destDir string, data templateData) (*generatedSet, error) {
+func hydrateTemplates(templateDir, destDir string, data *templateData) (*generatedSet, error) {
 	result := &generatedSet{}
-	err := filepath.WalkDir(templateDir, func(path string, d fs.DirEntry, walkErr error) error {
+	walker := func(path string, d fs.DirEntry, walkErr error) error {
 		if walkErr != nil {
 			return walkErr
 		}
@@ -110,47 +118,10 @@ func hydrateTemplates(templateDir, destDir string, data templateData) (*generate
 			return nil
 		}
 
-		rel, err := filepath.Rel(templateDir, path)
-		if err != nil {
-			return err
-		}
+		return renderTemplateFile(templateDir, destDir, path, data, result)
+	}
 
-		if !strings.HasSuffix(rel, ".tmpl") {
-			return fmt.Errorf("template files must use .tmpl extension: %s", rel)
-		}
-
-		destRel := strings.TrimSuffix(rel, ".tmpl")
-		destPath := filepath.Join(destDir, destRel)
-		if err := os.MkdirAll(filepath.Dir(destPath), 0o755); err != nil {
-			return err
-		}
-
-		contents, err := os.ReadFile(path)
-		if err != nil {
-			return err
-		}
-
-		tpl, err := template.New(rel).Parse(string(contents))
-		if err != nil {
-			return fmt.Errorf("parse template %s: %w", rel, err)
-		}
-
-		var buf bytes.Buffer
-		if err := tpl.Execute(&buf, data); err != nil {
-			return fmt.Errorf("render template %s: %w", rel, err)
-		}
-
-		if err := os.WriteFile(destPath, buf.Bytes(), 0o644); err != nil {
-			return fmt.Errorf("write file %s: %w", destPath, err)
-		}
-
-		if strings.HasSuffix(destPath, ".go") {
-			result.goFiles = append(result.goFiles, destPath)
-		}
-
-		return nil
-	})
-	if err != nil {
+	if err := filepath.WalkDir(templateDir, walker); err != nil {
 		return nil, err
 	}
 
@@ -167,8 +138,57 @@ func gofmtFiles(files []string) error {
 }
 
 func runCommand(name string, args ...string) error {
-	cmd := exec.Command(name, args...)
+	ctx, cancel := context.WithTimeout(context.Background(), commandTimeout)
+	defer cancel()
+
+	cmd := exec.CommandContext(ctx, name, args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
+}
+
+func renderTemplateFile(templateDir, destDir, path string, data *templateData, result *generatedSet) error {
+	rel, err := filepath.Rel(templateDir, path)
+	if err != nil {
+		return err
+	}
+
+	if !strings.HasSuffix(rel, ".tmpl") {
+		return fmt.Errorf("template files must use .tmpl extension: %s", rel)
+	}
+
+	destRel := strings.TrimSuffix(rel, ".tmpl")
+	destPath := filepath.Join(destDir, destRel)
+	if err := ensureSecureDir(filepath.Dir(destPath)); err != nil {
+		return fmt.Errorf("prepare directory for %s: %w", destPath, err)
+	}
+
+	contents, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+
+	tpl, err := template.New(rel).Parse(string(contents))
+	if err != nil {
+		return fmt.Errorf("parse template %s: %w", rel, err)
+	}
+
+	var buf bytes.Buffer
+	if err := tpl.Execute(&buf, data); err != nil {
+		return fmt.Errorf("render template %s: %w", rel, err)
+	}
+
+	if err := os.WriteFile(destPath, buf.Bytes(), secureFilePerm); err != nil {
+		return fmt.Errorf("write file %s: %w", destPath, err)
+	}
+
+	if strings.HasSuffix(destPath, ".go") {
+		result.goFiles = append(result.goFiles, destPath)
+	}
+
+	return nil
+}
+
+func ensureSecureDir(path string) error {
+	return os.MkdirAll(path, secureDirPerm)
 }

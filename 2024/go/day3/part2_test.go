@@ -41,13 +41,12 @@ func TestPart2(t *testing.T) {
 }
 
 func BenchmarkDay_Part2(b *testing.B) {
-
 	b.Run("input1.txt", func(b *testing.B) {
 		f, closeFile := io.OpenFile("input1.txt")
 		defer closeFile()
 
 		b.Run("Part2 - all regex", func(b *testing.B) {
-			for i := 0; i < b.N; i++ {
+			for range b.N {
 				_, _ = Part2(bufio.NewScanner(f))
 			}
 		})
@@ -64,7 +63,7 @@ func BenchmarkDay_Part2(b *testing.B) {
 		defer closeFile()
 
 		b.Run("Part2 - all regex", func(b *testing.B) {
-			for i := 0; i < b.N; i++ {
+			for range b.N {
 				_, _ = Part2(bufio.NewScanner(f))
 			}
 		})

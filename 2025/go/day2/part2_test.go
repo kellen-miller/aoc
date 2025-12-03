@@ -1,4 +1,4 @@
-package day1
+package day2
 
 import (
 	"testing"
@@ -14,12 +14,12 @@ func TestPart2(t *testing.T) {
 		want  string
 	}{
 		"example": {
-			input: "example1.txt",
-			want:  "6",
+			input: "example2.txt",
+			want:  "4174379265",
 		},
 		"input": {
-			input: "input1.txt",
-			want:  "6819",
+			input: "input2.txt",
+			want:  "66500947346",
 		},
 	}
 
@@ -29,6 +29,12 @@ func TestPart2(t *testing.T) {
 			defer closeFile()
 
 			got, err := Part2(sc)
+
+			if name == "input" && tc.want == "" {
+				t.Logf("got %s", got)
+				return
+			}
+
 			require.NoError(t, err)
 			assert.Equal(t, tc.want, got)
 		})

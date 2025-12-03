@@ -6,9 +6,16 @@ import (
 	"strconv"
 )
 
+const (
+	dialPositions     = 100
+	dialStartPosition = 50
+	unlockedPosition  = 0
+	rightRotation     = "R"
+)
+
 func Part1(sc *bufio.Scanner) (string, error) {
 	var (
-		pos      = 50
+		pos      = dialStartPosition
 		password int
 	)
 
@@ -22,13 +29,13 @@ func Part1(sc *bufio.Scanner) (string, error) {
 		}
 
 		delta := change
-		if dir != "R" {
+		if dir != rightRotation {
 			delta = -change
 		}
 
-		pos = (pos + delta + 100) % 100
+		pos = (pos + delta + dialPositions) % dialPositions
 
-		if pos == 0 {
+		if pos == unlockedPosition {
 			password++
 		}
 	}

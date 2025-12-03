@@ -1,5 +1,5 @@
 {
   "command": "go",
   "args": ["run", "./languages/go/cmd/advent"],
-  "workdir": "."
+  "work_dir": "."
 }

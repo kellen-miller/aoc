@@ -9,27 +9,8 @@ import (
 )
 
 func Part1(sc *bufio.Scanner) (string, error) {
-	var (
-		row           int
-		topographyMap [][]int
-	)
-	for sc.Scan() {
-		line := sc.Text()
-		topographyRow := make([]int, len(line))
-		for i, c := range line {
-			ci, err := strconv.Atoi(string(c))
-			if err != nil {
-				return "", err
-			}
-
-			topographyRow[i] = ci
-		}
-
-		topographyMap = append(topographyMap, topographyRow)
-		row++
-	}
-
-	if err := sc.Err(); err != nil {
+	topographyMap, err := readTopography(sc)
+	if err != nil {
 		return "", err
 	}
 
@@ -55,7 +36,7 @@ func dfs(i int, j int, topographyMap [][]int, prevHeight int, ninesSeen *hashset
 		return 0
 	}
 
-	if height == 9 {
+	if height == maxHeightValue {
 		if ninesSeen == nil {
 			return 1
 		}

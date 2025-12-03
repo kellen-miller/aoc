@@ -52,7 +52,9 @@ func Part2(sc *bufio.Scanner) (string, error) {
 			return "", fmt.Errorf("failed to reorder update %v: %w", pageUpdate, err)
 		}
 
-		middleIdx := len(correctedUpdate) / 2 //nolint:mnd // Middle index is calculated based on the length of the slice.
+		middleIdx := len(
+			correctedUpdate,
+		) / 2 //nolint:mnd // Middle index is calculated based on the length of the slice.
 		middlePage, err := strconv.Atoi(correctedUpdate[middleIdx])
 		if err != nil {
 			return "", err

@@ -2,7 +2,7 @@ package day1
 
 import (
 	"bufio"
-	"log"
+	"fmt"
 	"strconv"
 	"unicode"
 )
@@ -33,7 +33,7 @@ func Part1(sc *bufio.Scanner) (string, error) {
 
 		val, err := strconv.Atoi(string(left) + string(right))
 		if err != nil {
-			log.Panic(err)
+			return "", fmt.Errorf("parse calibration value %q: %w", line, err)
 		}
 
 		sum += val

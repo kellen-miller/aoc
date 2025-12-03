@@ -19,7 +19,8 @@ tasks:
 
   go:lint:
     cmds:
-      - cd languages/go && golangci-lint run --config .golangci-lint.yaml
+      - golangci-lint fmt --config languages/go/.golangci-lint.yaml
+      - golangci-lint run --fix --config languages/go/.golangci-lint.yaml
 
   new-day:
     desc: "Scaffold a new day from templates (usage: task new-day YEAR=2024 DAY=12 [LANGUAGE=go])"

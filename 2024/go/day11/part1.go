@@ -6,11 +6,18 @@ import (
 	"strings"
 )
 
+const (
+	blinkIterations  = 25
+	stoneSplitFactor = 2
+	stoneMultiplier  = 2024
+	defaultStoneCap  = 64
+)
+
 func Part1(sc *bufio.Scanner) (string, error) {
-	var stones []int
+	stones := make([]int, 0, defaultStoneCap)
 	for sc.Scan() {
-		sstr := strings.Fields(sc.Text())
-		for _, st := range sstr {
+		sstr := strings.FieldsSeq(sc.Text())
+		for st := range sstr {
 			s, err := strconv.Atoi(st)
 			if err != nil {
 				return "", err
@@ -24,7 +31,7 @@ func Part1(sc *bufio.Scanner) (string, error) {
 		return "", err
 	}
 
-	for range 25 {
+	for range blinkIterations {
 		var err error
 		stones, err = blink(stones)
 		if err != nil {
@@ -36,7 +43,7 @@ func Part1(sc *bufio.Scanner) (string, error) {
 }
 
 func blink(stones []int) ([]int, error) {
-	var newStones []int
+	newStones := make([]int, 0, len(stones)*stoneSplitFactor)
 	for _, stone := range stones {
 		if stone == 0 {
 			newStones = append(newStones, 1)
@@ -44,12 +51,12 @@ func blink(stones []int) ([]int, error) {
 		}
 
 		stoneStr := strconv.Itoa(stone)
-		if len(stoneStr)%2 != 0 {
-			newStones = append(newStones, stone*2024)
+		if len(stoneStr)%stoneSplitFactor != 0 {
+			newStones = append(newStones, stone*stoneMultiplier)
 			continue
 		}
 
-		half := len(stoneStr) / 2
+		half := len(stoneStr) / stoneSplitFactor
 
 		left, err := strconv.Atoi(stoneStr[:half])
 		if err != nil {
