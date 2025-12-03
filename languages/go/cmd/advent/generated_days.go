@@ -24,6 +24,7 @@ import (
 	y2024d09 "github.com/kellen-miller/aoc/2024/go/day9"
 	y2025d01 "github.com/kellen-miller/aoc/2025/go/day1"
 	y2025d02 "github.com/kellen-miller/aoc/2025/go/day2"
+	y2025d03 "github.com/kellen-miller/aoc/2025/go/day3"
 )
 
 var solutionIndex = map[int]map[int]dayRunners{
@@ -121,6 +122,10 @@ var solutionIndex = map[int]map[int]dayRunners{
 		2: {
 			Part1: y2025d02.Part1,
 			Part2: y2025d02.Part2,
+		},
+		3: {
+			Part1: y2025d03.Part1,
+			Part2: y2025d03.Part2,
 		},
 	},
 }
