@@ -53,8 +53,8 @@ func parseID(gamePart string) int {
 }
 
 func parseRounds(roundPart string) bool {
-	for _, round := range strings.Split(roundPart, ";") {
-		for _, cube := range strings.Split(round, ",") {
+	for round := range strings.SplitSeq(roundPart, ";") {
+		for cube := range strings.SplitSeq(round, ",") {
 			if !isCubeValid(cube) {
 				return false
 			}

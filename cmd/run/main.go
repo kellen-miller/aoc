@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -16,12 +17,17 @@ import (
 	"github.com/lmittmann/tint"
 )
 
-const allKeyword = "all"
+const (
+	allKeyword       = "all"
+	yearDigits       = 4
+	runnerArgPadding = 8
+	runnerTimeout    = 2 * time.Minute
+)
 
 type runnerConfig struct {
 	Command string   `json:"command"`
+	WorkDir string   `json:"work_dir"`
 	Args    []string `json:"args"`
-	WorkDir string   `json:"workdir"`
 }
 
 type target struct {
@@ -29,72 +35,102 @@ type target struct {
 	Language string
 }
 
+type filterOptions struct {
+	year string
+	day  string
+	part string
+	lang string
+}
+
 func main() {
-	var (
-		yearFilter string
-		dayFilter  string
-		partFilter string
-		langFilter string
-	)
+	opts := parseFilterFlags()
+	configureLogger()
 
-	flag.StringVar(&yearFilter, "year", "", "year to run (defaults to all)")
-	flag.StringVar(&dayFilter, "day", "", "day to run (defaults to all)")
-	flag.StringVar(&partFilter, "part", "", "part to run (defaults to all)")
-	flag.StringVar(&langFilter, "lang", "", "language to run (defaults to all)")
+	if err := runApp(opts); err != nil {
+		slog.Error("run failed", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+}
+
+func parseFilterFlags() filterOptions {
+	var opts filterOptions
+	flag.StringVar(&opts.year, "year", "", "year to run (defaults to all)")
+	flag.StringVar(&opts.day, "day", "", "day to run (defaults to all)")
+	flag.StringVar(&opts.part, "part", "", "part to run (defaults to all)")
+	flag.StringVar(&opts.lang, "lang", "", "language to run (defaults to all)")
 	flag.Parse()
+	return opts
+}
 
+func configureLogger() {
 	slog.SetDefault(slog.New(tint.NewHandler(os.Stderr, &tint.Options{
 		Level:      slog.LevelInfo,
 		TimeFormat: time.Kitchen,
 	})))
+}
 
+func runApp(opts filterOptions) error {
 	cwd, err := os.Getwd()
 	if err != nil {
-		slog.Error("unable to determine working directory", slog.String("error", err.Error()))
-		os.Exit(1)
+		return fmt.Errorf("determine working directory: %w", err)
 	}
 
-	normalizedYear := normalizeFilter(yearFilter)
-	normalizedDay := normalizeFilter(dayFilter)
-	normalizedPart := normalizeFilter(partFilter)
-	normalizedLang := normalizeFilter(langFilter)
+	normalizedYear := normalizeFilter(opts.year)
+	normalizedDay := normalizeFilter(opts.day)
+	normalizedPart := normalizeFilter(opts.part)
+	normalizedLang := normalizeFilter(opts.lang)
 
 	yearLanguages, err := discoverYearLanguages(cwd)
 	if err != nil {
-		slog.Error("failed to discover year/language layout", slog.String("error", err.Error()))
-		os.Exit(1)
+		return fmt.Errorf("discover year/language layout: %w", err)
 	}
 
 	targets, err := selectTargets(yearLanguages, normalizedYear, normalizedLang)
 	if err != nil {
-		slog.Error("failed to select targets", slog.String("error", err.Error()))
-		os.Exit(1)
+		return fmt.Errorf("select targets: %w", err)
 	}
-
 	if len(targets) == 0 {
-		slog.Error("no matching solutions found", slog.String("year", normalizedYear), slog.String("lang", normalizedLang))
-		os.Exit(1)
+		return fmt.Errorf("no matching solutions found for year %q and language %q", normalizedYear, normalizedLang)
 	}
 
+	return runTargets(cwd, targets, normalizedDay, normalizedPart)
+}
+
+func runTargets(root string, targets []target, day, part string) error {
 	configs := make(map[string]runnerConfig)
 	for _, target := range targets {
-		cfg, ok := configs[target.Language]
-		if !ok {
-			cfg, err = loadRunnerConfig(cwd, target.Language)
-			if err != nil {
-				slog.Error("failed to load runner config", slog.String("language", target.Language), slog.String("error", err.Error()))
-				os.Exit(1)
-			}
-			configs[target.Language] = cfg
+		cfg, err := ensureRunnerConfig(configs, root, target.Language)
+		if err != nil {
+			return err
 		}
 
-		slog.Info("running", slog.String("language", target.Language), slog.String("year", target.Year), slog.String("day", fallbackValue(normalizedDay, allKeyword)), slog.String("part", fallbackValue(normalizedPart, allKeyword)))
+		slog.Info(
+			"running",
+			slog.String("language", target.Language),
+			slog.String("year", target.Year),
+			slog.String("day", fallbackValue(day, allKeyword)),
+			slog.String("part", fallbackValue(part, allKeyword)),
+		)
 
-		if err := executeLanguage(cfg, target.Language, target.Year, normalizedDay, normalizedPart, cwd); err != nil {
-			slog.Error("run failed", slog.String("language", target.Language), slog.String("year", target.Year), slog.String("error", err.Error()))
-			os.Exit(1)
+		if err := executeLanguage(cfg, target.Language, target.Year, day, part, root); err != nil {
+			return fmt.Errorf("execute %s/%s: %w", target.Language, target.Year, err)
 		}
 	}
+
+	return nil
+}
+
+func ensureRunnerConfig(cache map[string]runnerConfig, root, language string) (runnerConfig, error) {
+	if cfg, ok := cache[language]; ok {
+		return cfg, nil
+	}
+
+	cfg, err := loadRunnerConfig(root, language)
+	if err != nil {
+		return runnerConfig{}, fmt.Errorf("load runner config for %s: %w", language, err)
+	}
+	cache[language] = cfg
+	return cfg, nil
 }
 
 func normalizeFilter(value string) string {
@@ -113,6 +149,40 @@ func fallbackValue(value string, fallback string) string {
 		return fallback
 	}
 	return value
+}
+
+func validateCommand(command string) error {
+	if strings.ContainsRune(command, os.PathSeparator) {
+		return fmt.Errorf("command %q must not include path separators", command)
+	}
+
+	allowed := map[string]struct{}{
+		"bash":    {},
+		"bun":     {},
+		"cargo":   {},
+		"deno":    {},
+		"dotnet":  {},
+		"go":      {},
+		"java":    {},
+		"kotlinc": {},
+		"make":    {},
+		"node":    {},
+		"npm":     {},
+		"pnpm":    {},
+		"python":  {},
+		"python3": {},
+		"ruby":    {},
+		"sh":      {},
+		"swift":   {},
+		"yarn":    {},
+		"zig":     {},
+	}
+
+	if _, ok := allowed[command]; !ok {
+		return fmt.Errorf("command %q is not in the allowed runner list", command)
+	}
+
+	return nil
 }
 
 func discoverYearLanguages(root string) (map[string][]string, error) {
@@ -161,7 +231,7 @@ func discoverYearLanguages(root string) (map[string][]string, error) {
 }
 
 func isYearDirectory(name string) bool {
-	if len(name) != 4 {
+	if len(name) != yearDigits {
 		return false
 	}
 	for _, r := range name {
@@ -233,7 +303,11 @@ func loadRunnerConfig(root string, language string) (runnerConfig, error) {
 }
 
 func executeLanguage(cfg runnerConfig, language string, year string, day string, part string, root string) error {
-	args := make([]string, 0, len(cfg.Args)+8)
+	if err := validateCommand(cfg.Command); err != nil {
+		return err
+	}
+
+	args := make([]string, 0, len(cfg.Args)+runnerArgPadding)
 	args = append(args, cfg.Args...)
 	args = append(args, "--year", year)
 	if day != "" {
@@ -244,7 +318,11 @@ func executeLanguage(cfg runnerConfig, language string, year string, day string,
 	}
 	args = append(args, "--lang", language)
 
-	cmd := exec.Command(cfg.Command, args...)
+	ctx, cancel := context.WithTimeout(context.Background(), runnerTimeout)
+	defer cancel()
+
+	// #nosec G204 - cfg.Command validated via validateCommand
+	cmd := exec.CommandContext(ctx, cfg.Command, args...)
 	cmd.Dir = filepath.Join(root, cfg.WorkDir)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

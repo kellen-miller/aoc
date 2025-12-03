@@ -5,13 +5,13 @@ import (
 )
 
 func Benchmark_Day2_Part1(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		RedundantCleanup("../input.txt")
 	}
 }
 
 func Benchmark_Day2_Part2(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		OverlappingSections("../input.txt")
 	}
 }

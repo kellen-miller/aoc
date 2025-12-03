@@ -1,4 +1,3 @@
-//nolint:intrange // package is outdated and not maintained
 package parts
 
 import (
@@ -21,7 +20,7 @@ func BadgePriorityTotal(input string) int {
 	var total int
 	for {
 		groups := make([]string, groupSize)
-		for i := 0; i < groupSize; i++ {
+		for i := range groupSize {
 			if !sc.Scan() {
 				return total
 			}

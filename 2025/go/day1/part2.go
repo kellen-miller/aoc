@@ -8,8 +8,8 @@ import (
 
 func Part2(sc *bufio.Scanner) (string, error) {
 	var (
-		pos      = 50
-		prevPos  = 50
+		pos      = dialStartPosition
+		prevPos  int
 		password int
 	)
 
@@ -22,26 +22,26 @@ func Part2(sc *bufio.Scanner) (string, error) {
 			return "", fmt.Errorf("could not parse change %q: %w", line[1:], err)
 		}
 
-		password += change / 100
-		change %= 100
+		password += change / dialPositions
+		change %= dialPositions
 		prevPos = pos
 
 		var rollover bool
-		if dir == "R" {
+		if dir == rightRotation {
 			pos += change
-			if pos > 99 {
-				pos -= 100
-				rollover = prevPos != 0
+			if pos >= dialPositions {
+				pos -= dialPositions
+				rollover = prevPos != unlockedPosition
 			}
 		} else {
 			pos -= change
 			if pos < 0 {
-				pos += 100
-				rollover = prevPos != 0
+				pos += dialPositions
+				rollover = prevPos != unlockedPosition
 			}
 		}
 
-		if pos == 0 || rollover {
+		if pos == unlockedPosition || rollover {
 			password++
 		}
 	}

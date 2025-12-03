@@ -1,7 +1,7 @@
-//nolint:intrange,errcheck // package is outdated and not maintained
 package parts
 
 import (
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -12,7 +12,8 @@ import (
 )
 
 const (
-	crateDescLen = 3
+	crateDescLen         = 3
+	moveInstructionParts = 3
 )
 
 type crate struct {
@@ -35,48 +36,61 @@ func RearrangeCrates(input string) string {
 
 	for sc.Scan() {
 		line := sc.Text()
-		if strings.ContainsRune(line, '[') {
-			crates := getCrates(line)
-
-			for len(stacks) <= crates[len(crates)-1].stack {
-				stacks = append(stacks, sll.New[string]())
-			}
-
-			for _, crate := range crates {
-				stacks[crate.stack].Prepend(crate.val)
-			}
-		} else if strings.HasPrefix(line, "move") {
-			var (
-				nums = re.FindAllString(line, -1)
-
-				moving, _ = strconv.Atoi(nums[0])
-				from, _   = strconv.Atoi(nums[1])
-				to, _     = strconv.Atoi(nums[2])
-			)
-
-			// decrement for indexing
-			from--
-			to--
-
-			for i := 0; i < moving; i++ {
-				top := stacks[from].Size() - 1
-
-				cr, ok := stacks[from].Get(top)
-				if !ok {
-					break
-				}
-
-				for len(stacks) <= to {
-					stacks = append(stacks, sll.New[string]())
-				}
-
-				stacks[from].Remove(top)
-				stacks[to].Append(cr)
-			}
+		switch {
+		case strings.ContainsRune(line, '['):
+			stacks = appendCrateLayer(stacks, line)
+		case strings.HasPrefix(line, "move"):
+			stacks = moveCratesSingle(stacks, line, re)
 		}
 	}
 
 	return topOfStacks(stacks)
+}
+
+func appendCrateLayer(stacks []*sll.List[string], line string) []*sll.List[string] {
+	crates := getCrates(line)
+	if len(crates) == 0 {
+		return stacks
+	}
+
+	maxIndex := crates[len(crates)-1].stack
+	stacks = ensureStackCapacity(stacks, maxIndex)
+
+	for _, cr := range crates {
+		stacks[cr.stack].Prepend(cr.val)
+	}
+
+	return stacks
+}
+
+func moveCratesSingle(stacks []*sll.List[string], line string, re *regexp.Regexp) []*sll.List[string] {
+	nums := re.FindAllString(line, -1)
+	if len(nums) < moveInstructionParts {
+		return stacks
+	}
+
+	moving := mustAtoi(nums[0])
+	from := mustAtoi(nums[1]) - 1
+	to := mustAtoi(nums[2]) - 1
+	stacks = ensureStackCapacity(stacks, from)
+	stacks = ensureStackCapacity(stacks, to)
+
+	for range moving {
+		top := stacks[from].Size() - 1
+		if top < 0 {
+			break
+		}
+
+		cr, ok := stacks[from].Get(top)
+		if !ok {
+			break
+		}
+
+		stacks[from].Remove(top)
+		stacks[to].Append(cr)
+	}
+
+	return stacks
 }
 
 func getCrates(line string) []crate {
@@ -103,4 +117,19 @@ func topOfStacks(stacks []*sll.List[string]) string {
 	}
 
 	return sb.String()
+}
+
+func ensureStackCapacity(stacks []*sll.List[string], index int) []*sll.List[string] {
+	for len(stacks) <= index {
+		stacks = append(stacks, sll.New[string]())
+	}
+	return stacks
+}
+
+func mustAtoi(value string) int {
+	num, err := strconv.Atoi(value)
+	if err != nil {
+		panic(fmt.Sprintf("invalid integer %q: %v", value, err))
+	}
+	return num
 }

@@ -7,37 +7,22 @@ import (
 	"strings"
 )
 
+const evenSplitDivisor = 2
+
 func Part1(sc *bufio.Scanner) (string, error) {
 	var invalidTotal int
 
 	for sc.Scan() {
-		idRanges := strings.Split(sc.Text(), ",")
-		if len(idRanges) == 0 {
-			break
+		line := strings.TrimSpace(sc.Text())
+		if line == "" {
+			continue
 		}
 
-		for _, idRange := range idRanges {
-			firstIDStr, lastIDStr, ok := strings.Cut(idRange, "-")
-			if !ok {
-				return "", fmt.Errorf("could not parse id range: %s", idRange)
-			}
-
-			firstID, err := strconv.Atoi(firstIDStr)
-			if err != nil {
-				return "", fmt.Errorf("could not parse id %d: %w", firstID, err)
-			}
-
-			lastID, err := strconv.Atoi(lastIDStr)
-			if err != nil {
-				return "", fmt.Errorf("could not parse id %d: %w", lastID, err)
-			}
-
-			for i := firstID; i <= lastID; i++ {
-				if !part1ValidateID(strconv.Itoa(i)) {
-					invalidTotal += i
-				}
-			}
+		lineTotal, err := sumInvalidFromLine(line)
+		if err != nil {
+			return "", err
 		}
+		invalidTotal += lineTotal
 	}
 
 	if err := sc.Err(); err != nil {
@@ -48,7 +33,7 @@ func Part1(sc *bufio.Scanner) (string, error) {
 }
 
 func part1ValidateID(id string) bool {
-	if len(id) == 0 { // empty
+	if id == "" { // empty
 		return false
 	}
 
@@ -56,14 +41,53 @@ func part1ValidateID(id string) bool {
 		return false
 	}
 
-	if len(id)%2 != 0 { // odd length
+	if len(id)%evenSplitDivisor != 0 { // odd length
 		return true
 	}
 
-	mid := len(id) / 2
-	if id[:mid] != id[mid:] {
-		return true
+	mid := len(id) / evenSplitDivisor
+	return id[:mid] != id[mid:]
+}
+
+func sumInvalidFromLine(line string) (int, error) {
+	idRanges := strings.Split(line, ",")
+	var total int
+	for _, idRange := range idRanges {
+		idRange = strings.TrimSpace(idRange)
+		if idRange == "" {
+			continue
+		}
+
+		firstID, lastID, err := parseRangeBounds(idRange)
+		if err != nil {
+			return 0, err
+		}
+
+		for id := firstID; id <= lastID; id++ {
+			if !part1ValidateID(strconv.Itoa(id)) {
+				total += id
+			}
+		}
 	}
 
-	return false
+	return total, nil
+}
+
+func parseRangeBounds(idRange string) (int, int, error) {
+	firstIDStr, lastIDStr, ok := strings.Cut(idRange, "-")
+	if !ok {
+		return 0, 0, fmt.Errorf("could not parse id range: %s", idRange)
+	}
+
+	firstID, err := strconv.Atoi(strings.TrimSpace(firstIDStr))
+	if err != nil {
+		return 0, 0, fmt.Errorf("could not parse id %s: %w", firstIDStr, err)
+	}
+
+	lastID, err := strconv.Atoi(strings.TrimSpace(lastIDStr))
+	if err != nil {
+		return 0, 0, fmt.Errorf("could not parse id %s: %w", lastIDStr, err)
+	}
+
+	return firstID, lastID, nil
 }

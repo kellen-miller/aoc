@@ -5,15 +5,9 @@ import (
 	"strconv"
 )
 
-var dirs = [][]int{
-	{0, 1},   // right
-	{0, -1},  // left
-	{1, 0},   // down
-	{-1, 0},  // up
-	{1, 1},   // down right
-	{1, -1},  // down left
-	{-1, 1},  // up right
-	{-1, -1}, // up left
+type direction struct {
+	row int
+	col int
 }
 
 func Part1(sc *bufio.Scanner) (string, error) {
@@ -30,6 +24,17 @@ func Part1(sc *bufio.Scanner) (string, error) {
 }
 
 func findCountOfWord(wordSearch [][]rune, word string) int {
+	directions := []direction{
+		{row: 0, col: 1},   // right
+		{row: 0, col: -1},  // left
+		{row: 1, col: 0},   // down
+		{row: -1, col: 0},  // up
+		{row: 1, col: 1},   // down right
+		{row: 1, col: -1},  // down left
+		{row: -1, col: 1},  // up right
+		{row: -1, col: -1}, // up left
+	}
+
 	var count int
 	for i := range wordSearch {
 		for j := range wordSearch[i] {
@@ -37,7 +42,7 @@ func findCountOfWord(wordSearch [][]rune, word string) int {
 				continue
 			}
 
-			for _, dir := range dirs {
+			for _, dir := range directions {
 				count += dfsFindCountOfWord(wordSearch, i, j, dir, word)
 			}
 		}
@@ -46,7 +51,7 @@ func findCountOfWord(wordSearch [][]rune, word string) int {
 	return count
 }
 
-func dfsFindCountOfWord(wordSearch [][]rune, i int, j int, dir []int, word string) int {
+func dfsFindCountOfWord(wordSearch [][]rune, i int, j int, dir direction, word string) int {
 	if i < 0 || j < 0 || i >= len(wordSearch) || j >= len(wordSearch[i]) {
 		return 0
 	}
@@ -59,5 +64,5 @@ func dfsFindCountOfWord(wordSearch [][]rune, i int, j int, dir []int, word strin
 		return 1
 	}
 
-	return dfsFindCountOfWord(wordSearch, i+dir[0], j+dir[1], dir, word[1:])
+	return dfsFindCountOfWord(wordSearch, i+dir.row, j+dir.col, dir, word[1:])
 }

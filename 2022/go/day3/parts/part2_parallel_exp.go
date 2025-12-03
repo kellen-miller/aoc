@@ -1,4 +1,3 @@
-//nolint:intrange // package is outdated and not maintained
 package parts
 
 import (
@@ -23,7 +22,7 @@ func BadgePriorityTotalParallelGroups(input string) int {
 
 	for {
 		rucksacks := make([]string, 0, groupSize)
-		for i := 0; i < groupSize; i++ {
+		for range groupSize {
 			if !sc.Scan() {
 				break
 			}
@@ -61,11 +60,10 @@ func BadgePriorityTotalChannels(input string) int {
 		results = make(chan int)
 	)
 
-	wg.Add(1)
-	go func() {
+	wg.Go(func() {
 		for {
 			group := make([]string, 0, groupSize)
-			for i := 0; i < groupSize; i++ {
+			for range groupSize {
 				if !sc.Scan() {
 					break
 				}
@@ -81,8 +79,7 @@ func BadgePriorityTotalChannels(input string) int {
 		}
 
 		close(groups)
-		wg.Done()
-	}()
+	})
 
 	for group := range groups {
 		wg.Add(1)

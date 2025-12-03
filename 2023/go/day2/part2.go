@@ -32,8 +32,8 @@ func parseRoundsPower(line string) *CubeMaxes {
 	}
 
 	maxesSeen := new(CubeMaxes)
-	for _, round := range strings.Split(gameParts[1], ";") {
-		for _, cube := range strings.Split(round, ",") {
+	for round := range strings.SplitSeq(gameParts[1], ";") {
+		for cube := range strings.SplitSeq(round, ",") {
 			parseCubePower(cube, maxesSeen)
 		}
 	}

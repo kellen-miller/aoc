@@ -7,6 +7,11 @@ import (
 	"strings"
 )
 
+const (
+	blinkMemoIterations = 75
+	decimalBase         = 10
+)
+
 type Key struct {
 	Stone     int
 	Iteration int
@@ -18,14 +23,14 @@ func Part2(sc *bufio.Scanner) (string, error) {
 		memo   = make(map[Key]int)
 	)
 	for sc.Scan() {
-		sstr := strings.Fields(sc.Text())
-		for _, st := range sstr {
+		sstr := strings.FieldsSeq(sc.Text())
+		for st := range sstr {
 			s, err := strconv.Atoi(st)
 			if err != nil {
 				return "", err
 			}
 
-			stones += blinkMemo(s, 75, memo)
+			stones += blinkMemo(s, blinkMemoIterations, memo)
 		}
 	}
 
@@ -54,12 +59,12 @@ func blinkMemo(stone int, iteration int, memo map[Key]int) int {
 		result = blinkMemo(1, iteration-1, memo)
 	default:
 		digits := int(math.Floor(math.Log10(float64(stone)))) + 1
-		if digits%2 != 0 {
-			result = blinkMemo(stone*2024, iteration-1, memo)
+		if digits%stoneSplitFactor != 0 {
+			result = blinkMemo(stone*stoneMultiplier, iteration-1, memo)
 			break
 		}
 
-		divisor := int(math.Pow(10, float64(digits/2)))
+		divisor := int(math.Pow10(digits / stoneSplitFactor))
 		result = blinkMemo(stone/divisor, iteration-1, memo) + blinkMemo(stone%divisor, iteration-1, memo)
 	}
 

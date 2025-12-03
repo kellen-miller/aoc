@@ -132,7 +132,6 @@ linters:
     - usestdlibvars # detects the possibility to use variables/constants from the Go standard library
     - usetesting # detects when some calls can be replaced by methods from the testing package.
     - wastedassign # finds wasted assignment statements
-    - wrapcheck # checks that errors returned from external packages are wrapped to help with tracing an error chain.
     - whitespace # detects leading and trailing whitespace
     - zerologlint # detects the wrong usage of zerolog that a user forgets to dispatch zerolog.Event
 

@@ -19,7 +19,7 @@ func TestPart2(t *testing.T) {
 		},
 		"input": {
 			input: "input2.txt",
-			want:  "",
+			want:  "66500947346",
 		},
 	}
 
