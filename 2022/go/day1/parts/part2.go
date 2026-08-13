@@ -1,6 +1,7 @@
 package parts
 
 import (
+	"container/heap"
 	"strconv"
 
 	"github.com/kellen-miller/aoc/2022/go/shared"
@@ -30,7 +31,7 @@ func Top3Calories(input string) ([]int, int) {
 		currentCals += cals
 
 		if err != nil {
-			elfHeap.Push([]int{currentCals})
+			heap.Push(elfHeap, []int{currentCals})
 			currentCals = 0
 		}
 	}
