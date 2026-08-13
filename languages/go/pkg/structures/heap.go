@@ -2,7 +2,6 @@ package structures
 
 import (
 	"cmp"
-	"container/heap"
 )
 
 type Heap[T cmp.Ordered] struct {
@@ -12,14 +11,11 @@ type Heap[T cmp.Ordered] struct {
 }
 
 func NewHeap[T cmp.Ordered](isMin bool, capacity int) *Heap[T] {
-	h := &Heap[T]{
+	return &Heap[T]{
 		data:     make([][]T, 0),
 		isMin:    isMin,
 		capacity: capacity,
 	}
-
-	heap.Init(h)
-	return h
 }
 
 func (h *Heap[T]) Len() int {
@@ -39,8 +35,8 @@ func (h *Heap[T]) Swap(i, j int) {
 }
 
 func (h *Heap[T]) Push(x any) {
-	if h.capacity == 0 {
-		heap.Push(h, x)
+	if h.capacity == 0 || h.Len() < h.capacity {
+		h.data = append(h.data, x.([]T))
 		return
 	}
 
@@ -55,12 +51,16 @@ func (h *Heap[T]) Push(x any) {
 		}
 	}
 
-	heap.Pop(h)
-	heap.Push(h, x)
+	h.Pop()
+	h.data = append(h.data, x.([]T))
 }
 
 func (h *Heap[T]) Pop() any {
-	return heap.Pop(h)
+	old := h.data
+	n := len(old)
+	item := old[n-1]
+	h.data = old[0 : n-1]
+	return item
 }
 
 func (h *Heap[T]) Peek() []T {
