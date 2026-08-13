@@ -12,11 +12,14 @@ type Heap[T cmp.Ordered] struct {
 }
 
 func NewHeap[T cmp.Ordered](isMin bool, capacity int) *Heap[T] {
-	return &Heap[T]{
+	h := &Heap[T]{
 		data:     make([][]T, 0),
 		isMin:    isMin,
 		capacity: capacity,
 	}
+
+	heap.Init(h)
+	return h
 }
 
 func (h *Heap[T]) Len() int {
@@ -36,30 +39,28 @@ func (h *Heap[T]) Swap(i, j int) {
 }
 
 func (h *Heap[T]) Push(x any) {
-	val := x.([]T)
-	if h.capacity > 0 && h.Len() == h.capacity {
-		if h.isMin {
-			if val[0] <= h.data[0][0] {
-				return
-			}
-		} else {
-			if val[0] >= h.data[0][0] {
-				return
-			}
-		}
-
-		heap.Pop(h)
+	if h.capacity == 0 {
+		heap.Push(h, x)
+		return
 	}
 
-	heap.Push(h, val)
+	val := x.([]T)
+	if h.isMin {
+		if val[0] <= h.data[0][0] {
+			return
+		}
+	} else {
+		if val[0] >= h.data[0][0] {
+			return
+		}
+	}
+
+	heap.Pop(h)
+	heap.Push(h, x)
 }
 
 func (h *Heap[T]) Pop() any {
-	old := h.data
-	n := len(old)
-	x := old[n-1]
-	h.data = old[:n-1]
-	return x
+	return heap.Pop(h)
 }
 
 func (h *Heap[T]) Peek() []T {
