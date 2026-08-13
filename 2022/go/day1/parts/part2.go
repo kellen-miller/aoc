@@ -6,7 +6,6 @@ import (
 	"github.com/kellen-miller/aoc/2022/go/shared"
 	"github.com/kellen-miller/aoc/languages/go/pkg/io"
 	"github.com/kellen-miller/aoc/languages/go/pkg/structures"
-	"github.com/ugurcsen/gods-generic/trees/binaryheap"
 )
 
 const (
@@ -24,7 +23,7 @@ func Top3Calories(input string) ([]int, int) {
 	var (
 		elfHeap = &structures.CapacityHeap[int]{
 			Capacity: capacity,
-			Heap:     binaryheap.NewWithNumberComparator[int](),
+			MinHeap:  structures.NewMinHeap[int](),
 		}
 		currentCals int
 	)
