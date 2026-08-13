@@ -21,10 +21,7 @@ func Top3Calories(input string) ([]int, int) {
 	defer closeFile()
 
 	var (
-		elfHeap = &structures.CapacityHeap[int]{
-			Capacity: capacity,
-			MinHeap:  structures.NewMinHeap[int](),
-		}
+		elfHeap     = structures.NewHeap[int](true, capacity)
 		currentCals int
 	)
 
@@ -33,15 +30,20 @@ func Top3Calories(input string) ([]int, int) {
 		currentCals += cals
 
 		if err != nil {
-			elfHeap.Push(currentCals)
+			elfHeap.Push([]int{currentCals})
 			currentCals = 0
 		}
 	}
 
 	var sum int
 	for _, val := range elfHeap.Values() {
-		sum += val
+		sum += val[0]
 	}
 
-	return elfHeap.Values(), sum
+	res := make([]int, len(elfHeap.Values()))
+	for i, v := range elfHeap.Values() {
+		res[i] = v[0]
+	}
+
+	return res, sum
 }
