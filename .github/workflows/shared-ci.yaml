@@ -1,0 +1,21 @@
+name: Shared CI
+on:
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: shared-ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  workflows:
+    uses: kellen-miller/ci/.github/workflows/gh-actions-lint.yaml@d1c91763535a5866b55282018f301d921b22bcd5
+  renovate:
+    uses: kellen-miller/ci/.github/workflows/renovate-config-validator.yaml@d1c91763535a5866b55282018f301d921b22bcd5
+  go:
+    uses: kellen-miller/ci/.github/workflows/go-test.yaml@f1c71552558245556f16cc5d528c8ebf0b8b97c3
+    with:
+      go-version-file: go.mod
+      # Solver tests require ignored local puzzle inputs.
+      test-packages: ./languages/go/pkg/...
+      vet: true
+      build-target: ./...
