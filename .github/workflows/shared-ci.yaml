@@ -7,11 +7,42 @@ concurrency:
   group: shared-ci-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 jobs:
+  changes:
+    uses: kellen-miller/ci/.github/workflows/changed-paths.yaml@f01aacda5b78c7b67d1dc840bd0432be852a69a4
+    with:
+      filters: |
+        {
+          "go": [
+            ".github/workflows/**",
+            ".github/actions/**",
+            "go.mod",
+            "go.sum",
+            "go.work",
+            "go.work.sum",
+            "**/*.go",
+            "cmd/**",
+            "internal/**",
+            "pkg/**",
+            "testdata/**",
+            "fixtures/**",
+            "scripts/**",
+            ".golangci*",
+            "Taskfile*",
+            "Makefile",
+            "languages/go/**",
+            "templates/**",
+            "**/testdata/**",
+            "**/fixtures/**"
+          ]
+        }
+
   workflows:
-    uses: kellen-miller/ci/.github/workflows/gh-actions-lint.yaml@d1c91763535a5866b55282018f301d921b22bcd5
+    uses: kellen-miller/ci/.github/workflows/gh-actions-lint.yaml@f01aacda5b78c7b67d1dc840bd0432be852a69a4
   renovate:
     uses: kellen-miller/ci/.github/workflows/renovate-config-validator.yaml@730a37faa538048765e3cbb2e9b1454cfc4eb722
   go:
+    needs: changes
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || fromJSON(needs.changes.outputs.changes).go) }}
     uses: kellen-miller/ci/.github/workflows/go-test.yaml@f1c71552558245556f16cc5d528c8ebf0b8b97c3
     with:
       go-version-file: go.mod
