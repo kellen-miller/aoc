@@ -7,11 +7,51 @@ concurrency:
   group: shared-ci-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      changes: ${{ steps.paths.outputs.changes }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - id: paths
+        uses: kellen-miller/ci/.github/actions/changed-paths@75c70f9d5db7117810669e0af01fd2eafdc396c6
+        with:
+          filters: |
+            {
+              "go": [
+                ".github/workflows/**",
+                ".github/actions/**",
+                "go.mod",
+                "go.sum",
+                "go.work",
+                "go.work.sum",
+                "**/*.go",
+                "cmd/**",
+                "internal/**",
+                "pkg/**",
+                "testdata/**",
+                "fixtures/**",
+                "scripts/**",
+                ".golangci*",
+                "Taskfile*",
+                "Makefile",
+                "languages/go/**",
+                "templates/**",
+                "**/testdata/**",
+                "**/fixtures/**"
+              ]
+            }
+
   workflows:
-    uses: kellen-miller/ci/.github/workflows/gh-actions-lint.yaml@d1c91763535a5866b55282018f301d921b22bcd5
+    uses: kellen-miller/ci/.github/workflows/gh-actions-lint.yaml@75c70f9d5db7117810669e0af01fd2eafdc396c6
   renovate:
-    uses: kellen-miller/ci/.github/workflows/renovate-config-validator.yaml@d1c91763535a5866b55282018f301d921b22bcd5
+    uses: kellen-miller/ci/.github/workflows/renovate-config-validator.yaml@730a37faa538048765e3cbb2e9b1454cfc4eb722
   go:
+    needs: changes
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || fromJSON(needs.changes.outputs.changes).go) }}
     uses: kellen-miller/ci/.github/workflows/go-test.yaml@f1c71552558245556f16cc5d528c8ebf0b8b97c3
     with:
       go-version-file: go.mod
