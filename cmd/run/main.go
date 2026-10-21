@@ -63,7 +63,7 @@ func parseFilterFlags() filterOptions {
 }
 
 func configureLogger() {
-	slog.SetDefault(slog.New(tint.NewHandler(os.Stderr, &tint.Options{
+	slog.SetDefault(slog.New(tint.NewTextHandler(os.Stderr, &tint.Options{
 		Level:      slog.LevelInfo,
 		TimeFormat: time.Kitchen,
 	})))
@@ -188,7 +188,7 @@ func validateCommand(command string) error {
 func discoverYearLanguages(root string) (map[string][]string, error) {
 	entries, err := os.ReadDir(root)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("read repository root %s: %w", root, err)
 	}
 
 	yearLanguages := make(map[string][]string)
@@ -205,7 +205,7 @@ func discoverYearLanguages(root string) (map[string][]string, error) {
 		yearPath := filepath.Join(root, name)
 		langEntries, err := os.ReadDir(yearPath)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("read year directory %s: %w", yearPath, err)
 		}
 
 		var langs []string
@@ -283,12 +283,12 @@ func loadRunnerConfig(root string, language string) (runnerConfig, error) {
 	cfgPath := filepath.Join(root, "languages", language, "runner.json")
 	data, err := os.ReadFile(cfgPath)
 	if err != nil {
-		return runnerConfig{}, err
+		return runnerConfig{}, fmt.Errorf("read runner config %s: %w", cfgPath, err)
 	}
 
 	var cfg runnerConfig
 	if err := json.Unmarshal(data, &cfg); err != nil {
-		return runnerConfig{}, err
+		return runnerConfig{}, fmt.Errorf("parse runner config %s: %w", cfgPath, err)
 	}
 
 	if cfg.Command == "" {
@@ -328,5 +328,9 @@ func executeLanguage(cfg runnerConfig, language string, year string, day string,
 	cmd.Stderr = os.Stderr
 	cmd.Env = os.Environ()
 
-	return cmd.Run()
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("run %s for %s/%s: %w", cfg.Command, language, year, err)
+	}
+
+	return nil
 }

@@ -2,6 +2,7 @@ package day4
 
 import (
 	"bufio"
+	"fmt"
 	"strconv"
 )
 
@@ -11,13 +12,13 @@ type direction struct {
 }
 
 func Part1(sc *bufio.Scanner) (string, error) {
-	var wordSearch [][]rune //nolint:prealloc // Preallocating is not possible here
+	var wordSearch [][]rune
 	for sc.Scan() {
 		wordSearch = append(wordSearch, []rune(sc.Text()))
 	}
 
 	if err := sc.Err(); err != nil {
-		return "", err
+		return "", fmt.Errorf("scan word search: %w", err)
 	}
 
 	return strconv.Itoa(findCountOfWord(wordSearch, "XMAS")), nil

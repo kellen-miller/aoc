@@ -2,6 +2,7 @@ package day6
 
 import (
 	"bufio"
+	"fmt"
 	"strconv"
 
 	"github.com/kellen-miller/aoc/languages/go/pkg/grid"
@@ -38,7 +39,7 @@ func Part1(sc *bufio.Scanner) (string, error) {
 	}
 
 	if err := sc.Err(); err != nil {
-		return "", err
+		return "", fmt.Errorf("scan guard map: %w", err)
 	}
 
 	return strconv.Itoa(predictRoute(lab, GuardState{

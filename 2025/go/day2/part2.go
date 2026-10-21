@@ -164,8 +164,21 @@ func buildPow10(maxDigits int) []int64 {
 
 func buildRepeatedValues(maxDigits int, maxValue int64, pow10 []int64) []int64 {
 	limitBaseDigits := maxDigits / evenSplitDivisor
-	seen := make(map[int64]struct{})
-	var values []int64
+	candidateCapacity := 0
+	for baseDigits := 1; baseDigits <= limitBaseDigits; baseDigits++ {
+		minBase := pow10[baseDigits-1]
+		maxBase := pow10[baseDigits] - 1
+		for repeats := minRepeatCount; baseDigits*repeats <= maxDigits; repeats++ {
+			multiplier := repeatMultiplier(baseDigits, repeats, pow10)
+			baseUpper := min(maxBase, maxValue/multiplier)
+			if baseUpper >= minBase {
+				candidateCapacity += int(baseUpper - minBase + 1)
+			}
+		}
+	}
+
+	seen := make(map[int64]struct{}, candidateCapacity)
+	values := make([]int64, 0, candidateCapacity)
 	for baseDigits := 1; baseDigits <= limitBaseDigits; baseDigits++ {
 		values = append(values, collectValuesForBaseDigits(baseDigits, maxDigits, maxValue, pow10, seen)...)
 	}

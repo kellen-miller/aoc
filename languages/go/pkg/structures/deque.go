@@ -6,6 +6,18 @@ type Deque[T any] struct {
 	size int
 }
 
+type dequeStorage[T any] struct {
+	data Deque[T]
+}
+
+func (s *dequeStorage[T]) Size() int {
+	return s.data.Size()
+}
+
+func (s *dequeStorage[T]) Empty() bool {
+	return s.data.Empty()
+}
+
 func NewDeque[T any]() *Deque[T] {
 	return &Deque[T]{}
 }
@@ -92,14 +104,16 @@ func (d *Deque[T]) ensureCapacity() {
 
 	capacity := 8
 	if len(d.data) > 0 {
-		capacity = len(d.data) * 2
+		capacity = len(d.data) * dequeCapacityGrowthFactor
 	}
 
 	data := make([]T, capacity)
-	for i := 0; i < d.size; i++ {
+	for i := range d.size {
 		data[i] = d.data[(d.head+i)%len(d.data)]
 	}
 
 	d.data = data
 	d.head = 0
 }
+
+const dequeCapacityGrowthFactor = 2

@@ -69,7 +69,7 @@ func run(year, day int, lang string) error {
 	if _, err := os.Stat(destDir); err == nil {
 		return fmt.Errorf("destination already exists: %s", destDir)
 	} else if !errors.Is(err, os.ErrNotExist) {
-		return err
+		return fmt.Errorf("check destination %s: %w", destDir, err)
 	}
 
 	if err := ensureSecureDir(destDir); err != nil {
@@ -122,7 +122,7 @@ func hydrateTemplates(templateDir, destDir string, data *templateData) (*generat
 	}
 
 	if err := filepath.WalkDir(templateDir, walker); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("walk templates in %s: %w", templateDir, err)
 	}
 
 	return result, nil
@@ -144,13 +144,17 @@ func runCommand(name string, args ...string) error {
 	cmd := exec.CommandContext(ctx, name, args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	return cmd.Run()
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("run %s %s: %w", name, strings.Join(args, " "), err)
+	}
+
+	return nil
 }
 
 func renderTemplateFile(templateDir, destDir, path string, data *templateData, result *generatedSet) error {
 	rel, err := filepath.Rel(templateDir, path)
 	if err != nil {
-		return err
+		return fmt.Errorf("determine template path relative to %s: %w", templateDir, err)
 	}
 
 	if !strings.HasSuffix(rel, ".tmpl") {
@@ -165,7 +169,7 @@ func renderTemplateFile(templateDir, destDir, path string, data *templateData, r
 
 	contents, err := os.ReadFile(path)
 	if err != nil {
-		return err
+		return fmt.Errorf("read template %s: %w", path, err)
 	}
 
 	tpl, err := template.New(rel).Parse(string(contents))
@@ -190,5 +194,9 @@ func renderTemplateFile(templateDir, destDir, path string, data *templateData, r
 }
 
 func ensureSecureDir(path string) error {
-	return os.MkdirAll(path, secureDirPerm)
+	if err := os.MkdirAll(path, secureDirPerm); err != nil {
+		return fmt.Errorf("create directory %s: %w", path, err)
+	}
+
+	return nil
 }

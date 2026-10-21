@@ -2,6 +2,7 @@ package day6
 
 import (
 	"bufio"
+	"fmt"
 	"maps"
 	"strconv"
 	"sync"
@@ -31,7 +32,7 @@ func Part2(sc *bufio.Scanner) (string, error) {
 	}
 
 	if err := sc.Err(); err != nil {
-		return "", err
+		return "", fmt.Errorf("scan guard map: %w", err)
 	}
 
 	return strconv.Itoa(obstaclePositionCausesLoop(lab, GuardState{

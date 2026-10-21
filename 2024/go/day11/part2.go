@@ -2,6 +2,7 @@ package day11
 
 import (
 	"bufio"
+	"fmt"
 	"math"
 	"strconv"
 	"strings"
@@ -27,7 +28,7 @@ func Part2(sc *bufio.Scanner) (string, error) {
 		for st := range sstr {
 			s, err := strconv.Atoi(st)
 			if err != nil {
-				return "", err
+				return "", fmt.Errorf("parse stone %q: %w", st, err)
 			}
 
 			stones += blinkMemo(s, blinkMemoIterations, memo)
@@ -35,7 +36,7 @@ func Part2(sc *bufio.Scanner) (string, error) {
 	}
 
 	if err := sc.Err(); err != nil {
-		return "", err
+		return "", fmt.Errorf("scan stones: %w", err)
 	}
 
 	return strconv.Itoa(stones), nil

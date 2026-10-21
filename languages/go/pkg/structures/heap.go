@@ -9,6 +9,10 @@ type Heap[T any] struct {
 	capacity    int
 }
 
+type heapEntry[T any] struct {
+	value T
+}
+
 func NewHeap[T any](less func(T, T) bool, capacity int) *Heap[T] {
 	h := &Heap[T]{
 		backingHeap: backingHeap[T]{
@@ -35,11 +39,16 @@ func (h *Heap[T]) Push(val T) {
 		heap.Pop(&h.backingHeap)
 	}
 
-	heap.Push(&h.backingHeap, val)
+	heap.Push(&h.backingHeap, heapEntry[T]{value: val})
 }
 
 func (h *Heap[T]) Pop() T {
-	return heap.Pop(&h.backingHeap).(T)
+	entry, ok := heap.Pop(&h.backingHeap).(heapEntry[T])
+	if !ok {
+		panic("heap backing returned a value with an unexpected type")
+	}
+
+	return entry.value
 }
 
 func (h *Heap[T]) Peek() (T, bool) {
@@ -56,8 +65,8 @@ func (h *Heap[T]) Values() []T {
 }
 
 type backingHeap[T any] struct {
-	data []T
 	less func(T, T) bool
+	data []T
 }
 
 func (h *backingHeap[T]) Len() int {
@@ -73,7 +82,12 @@ func (h *backingHeap[T]) Swap(i, j int) {
 }
 
 func (h *backingHeap[T]) Push(x any) {
-	h.data = append(h.data, x.(T))
+	entry, ok := x.(heapEntry[T])
+	if !ok {
+		panic("heap backing received a value with an unexpected type")
+	}
+
+	h.data = append(h.data, entry.value)
 }
 
 func (h *backingHeap[T]) Pop() any {
@@ -82,5 +96,5 @@ func (h *backingHeap[T]) Pop() any {
 	item := old[n-1]
 	h.data = old[:n-1]
 
-	return item
+	return heapEntry[T]{value: item}
 }

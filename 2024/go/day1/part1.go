@@ -3,6 +3,7 @@ package day1
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"math"
 	"regexp"
 	"slices"
@@ -12,7 +13,7 @@ import (
 var locationIDsInputRegex = regexp.MustCompile(`^(\d+)\s+(\d+)$`)
 
 func Part1(sc *bufio.Scanner) (string, error) {
-	var ( //nolint:prealloc // We don't know the length of the input
+	var (
 		leftLocationsIDs  []int
 		rightLocationsIDs []int
 	)
@@ -26,12 +27,12 @@ func Part1(sc *bufio.Scanner) (string, error) {
 
 		leftLocationID, err := strconv.Atoi(matches[1])
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("parse left location ID %q: %w", matches[1], err)
 		}
 
 		rightLocationID, err := strconv.Atoi(matches[2])
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("parse right location ID %q: %w", matches[2], err)
 		}
 
 		leftLocationsIDs = append(leftLocationsIDs, leftLocationID)
@@ -51,7 +52,7 @@ func Part1(sc *bufio.Scanner) (string, error) {
 	}
 
 	if err := sc.Err(); err != nil {
-		return "", err
+		return "", fmt.Errorf("scan location IDs: %w", err)
 	}
 
 	return strconv.FormatFloat(distance, 'f', -1, 64), nil

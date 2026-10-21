@@ -2,6 +2,8 @@ package day9
 
 import (
 	"bufio"
+	"fmt"
+	"slices"
 	"strconv"
 )
 
@@ -25,7 +27,7 @@ func Part2(sc *bufio.Scanner) (string, error) {
 	}
 
 	if err := sc.Err(); err != nil {
-		return "", err
+		return "", fmt.Errorf("scan disk map: %w", err)
 	}
 
 	return strconv.Itoa(compact2(layout, files, freeSpace)), nil
@@ -69,7 +71,7 @@ func parseLayout2(line string) ([]int, []*DiskSegment, []*DiskSegment) {
 }
 
 func compact2(layout []int, files []*DiskSegment, freeSpace []*DiskSegment) int {
-	for i := len(files) - 1; i >= 0; i-- {
+	for i := range slices.Backward(files) {
 		for _, fs := range freeSpace {
 			f := files[i]
 			if f.Start < fs.Start {

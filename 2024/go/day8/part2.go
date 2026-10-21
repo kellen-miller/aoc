@@ -2,6 +2,7 @@ package day8
 
 import (
 	"bufio"
+	"fmt"
 	"strconv"
 
 	"github.com/kellen-miller/aoc/languages/go/pkg/grid"
@@ -24,7 +25,7 @@ func Part2(sc *bufio.Scanner) (string, error) {
 	}
 
 	if err := sc.Err(); err != nil {
-		return "", err
+		return "", fmt.Errorf("scan antenna map: %w", err)
 	}
 
 	return strconv.Itoa(createResonantAntinodes(antennaPairs, rows, cols).Size()), nil

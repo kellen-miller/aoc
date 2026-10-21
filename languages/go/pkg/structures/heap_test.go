@@ -65,6 +65,17 @@ func TestHeapSupportsCustomValues(t *testing.T) {
 	}
 }
 
+func TestHeapPreservesNilInterfaceValue(t *testing.T) {
+	h := NewHeap[error](func(left, right error) bool {
+		return left == nil && right != nil
+	}, 0)
+	h.Push(nil)
+
+	if got := h.Pop(); got != nil {
+		t.Fatalf("got value %v, want nil", got)
+	}
+}
+
 func popValues(h *Heap[int]) []int {
 	values := make([]int, 0, h.Len())
 	for h.Len() > 0 {
