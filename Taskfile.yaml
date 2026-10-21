@@ -19,8 +19,11 @@ tasks:
 
   go:lint:
     cmds:
-      - golangci-lint fmt --config languages/go/.golangci-lint.yaml
-      - golangci-lint run --fix --config languages/go/.golangci-lint.yaml
+      - |
+        set -eu
+        : "${CI_POLICY_REPO:?Set CI_POLICY_REPO to a reviewed kellen-miller/ci checkout}"
+        LINT_CONFIG="$CI_POLICY_REPO/config/golangci.yaml" bash "$CI_POLICY_REPO/.github/actions/go-lint/format.sh"
+        golangci-lint run --config "$CI_POLICY_REPO/config/golangci.yaml"
 
   new-day:
     desc: "Scaffold a new day from templates (usage: task new-day YEAR=2024 DAY=12 [LANGUAGE=go])"
