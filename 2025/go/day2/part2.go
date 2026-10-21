@@ -164,24 +164,16 @@ func buildPow10(maxDigits int) []int64 {
 
 func buildRepeatedValues(maxDigits int, maxValue int64, pow10 []int64) []int64 {
 	limitBaseDigits := maxDigits / evenSplitDivisor
-	candidateCapacity := 0
+	seen := make(map[int64]bool)
 	for baseDigits := 1; baseDigits <= limitBaseDigits; baseDigits++ {
-		minBase := pow10[baseDigits-1]
-		maxBase := pow10[baseDigits] - 1
-		for repeats := minRepeatCount; baseDigits*repeats <= maxDigits; repeats++ {
-			multiplier := repeatMultiplier(baseDigits, repeats, pow10)
-			baseUpper := min(maxBase, maxValue/multiplier)
-			if baseUpper >= minBase {
-				candidateCapacity += int(baseUpper - minBase + 1)
-			}
-		}
+		collectValuesForBaseDigits(baseDigits, maxDigits, maxValue, pow10, seen)
 	}
 
-	seen := make(map[int64]struct{}, candidateCapacity)
-	values := make([]int64, 0, candidateCapacity)
-	for baseDigits := 1; baseDigits <= limitBaseDigits; baseDigits++ {
-		values = append(values, collectValuesForBaseDigits(baseDigits, maxDigits, maxValue, pow10, seen)...)
+	values := make([]int64, 0, len(seen))
+	for value := range seen {
+		values = append(values, value)
 	}
+
 	return values
 }
 
@@ -189,11 +181,10 @@ func collectValuesForBaseDigits(
 	baseDigits, maxDigits int,
 	maxValue int64,
 	pow10 []int64,
-	seen map[int64]struct{},
-) []int64 {
+	seen map[int64]bool,
+) {
 	minBase := pow10[baseDigits-1]
 	maxBase := pow10[baseDigits] - 1
-	var results []int64
 	for repeats := minRepeatCount; baseDigits*repeats <= maxDigits; repeats++ {
 		multiplier := repeatMultiplier(baseDigits, repeats, pow10)
 		baseUpper := maxBase
@@ -207,15 +198,12 @@ func collectValuesForBaseDigits(
 
 		for base := minBase; base <= baseUpper; base++ {
 			value := base * multiplier
-			if _, ok := seen[value]; ok {
+			if seen[value] {
 				continue
 			}
-			seen[value] = struct{}{}
-			results = append(results, value)
+			seen[value] = true
 		}
 	}
-
-	return results
 }
 
 func buildPrefixSums(values []int64) []int64 {
