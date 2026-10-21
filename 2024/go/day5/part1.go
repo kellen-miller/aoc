@@ -34,7 +34,7 @@ func Part1(sc *bufio.Scanner) (string, error) {
 	}
 
 	if err := sc.Err(); err != nil {
-		return "", err
+		return "", fmt.Errorf("scan page updates: %w", err)
 	}
 
 	var middlePageSum int
@@ -46,7 +46,7 @@ func Part1(sc *bufio.Scanner) (string, error) {
 		middleIdx := len(pageUpdate) / 2 //nolint:mnd // Middle index is calculated based on the length of the slice.
 		middlePage, err := strconv.Atoi(pageUpdate[middleIdx])
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("parse middle page %q: %w", pageUpdate[middleIdx], err)
 		}
 
 		middlePageSum += middlePage

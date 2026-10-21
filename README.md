@@ -39,3 +39,18 @@ task new-day YEAR=2024 DAY=12 LANGUAGE=go
 ```
 
 When scaffolding Go days the task automatically formats the generated code and refreshes the Go runner (`go generate ./languages/go/cmd/advent`), so new days are runnable immediately.
+
+## Go lint policy
+
+Go CI uses the shared action's bundled formatting and lint policy. The existing
+package-test selection still avoids solver tests that require local puzzle inputs.
+
+For the same local policy, use golangci-lint 2.15.0 and set `CI_POLICY_REPO` to an
+absolute path to a `kellen-miller/ci` checkout at the workflow's reviewed revision:
+
+```bash
+CI_POLICY_REPO=/path/to/ci task go:lint
+```
+
+This checks formatting and lint without rewriting files. The separate copied Go
+lint configuration is removed.

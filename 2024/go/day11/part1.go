@@ -2,6 +2,7 @@ package day11
 
 import (
 	"bufio"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -20,7 +21,7 @@ func Part1(sc *bufio.Scanner) (string, error) {
 		for st := range sstr {
 			s, err := strconv.Atoi(st)
 			if err != nil {
-				return "", err
+				return "", fmt.Errorf("parse stone %q: %w", st, err)
 			}
 
 			stones = append(stones, s)
@@ -28,7 +29,7 @@ func Part1(sc *bufio.Scanner) (string, error) {
 	}
 
 	if err := sc.Err(); err != nil {
-		return "", err
+		return "", fmt.Errorf("scan stones: %w", err)
 	}
 
 	for range blinkIterations {
@@ -60,12 +61,12 @@ func blink(stones []int) ([]int, error) {
 
 		left, err := strconv.Atoi(stoneStr[:half])
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("parse left half of stone %d: %w", stone, err)
 		}
 
 		right, err := strconv.Atoi(stoneStr[half:])
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("parse right half of stone %d: %w", stone, err)
 		}
 
 		newStones = append(newStones, left, right)

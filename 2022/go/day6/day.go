@@ -11,7 +11,7 @@ import (
 func Part1(sc *bufio.Scanner) (string, error) {
 	path, cleanup, err := bridge.MaterializeScanner(sc, "2022-day6-part1")
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("materialize part 1 input: %w", err)
 	}
 	defer cleanup()
 
@@ -21,7 +21,7 @@ func Part1(sc *bufio.Scanner) (string, error) {
 func Part2(sc *bufio.Scanner) (string, error) {
 	path, cleanup, err := bridge.MaterializeScanner(sc, "2022-day6-part2")
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("materialize part 2 input: %w", err)
 	}
 	defer cleanup()
 

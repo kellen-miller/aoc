@@ -3,6 +3,7 @@ package day1
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"strconv"
 )
 
@@ -12,7 +13,7 @@ type location struct {
 }
 
 func Part2(sc *bufio.Scanner) (string, error) {
-	var ( //nolint:prealloc // Preallocating is not possible here
+	var (
 		leftLocations []location
 		frequencies   = make(map[string]int)
 	)
@@ -26,7 +27,7 @@ func Part2(sc *bufio.Scanner) (string, error) {
 
 		leftLocationID, err := strconv.Atoi(matches[1])
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("parse left location ID %q: %w", matches[1], err)
 		}
 
 		leftLocations = append(leftLocations, location{
@@ -42,7 +43,7 @@ func Part2(sc *bufio.Scanner) (string, error) {
 	}
 
 	if err := sc.Err(); err != nil {
-		return "", err
+		return "", fmt.Errorf("scan location IDs: %w", err)
 	}
 
 	return strconv.Itoa(similarityScore), nil

@@ -2,17 +2,18 @@ package day4
 
 import (
 	"bufio"
+	"fmt"
 	"strconv"
 )
 
 func Part2(sc *bufio.Scanner) (string, error) {
-	var wordSearch [][]rune //nolint:prealloc // We don't know the size of the word search.
+	var wordSearch [][]rune
 	for sc.Scan() {
 		wordSearch = append(wordSearch, []rune(sc.Text()))
 	}
 
 	if err := sc.Err(); err != nil {
-		return "", err
+		return "", fmt.Errorf("scan word search: %w", err)
 	}
 
 	upper := []direction{

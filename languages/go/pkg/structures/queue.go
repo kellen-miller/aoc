@@ -1,7 +1,7 @@
 package structures
 
 type Queue[T any] struct {
-	data Deque[T]
+	dequeStorage[T]
 }
 
 func NewQueue[T any]() *Queue[T] {
@@ -18,12 +18,4 @@ func (q *Queue[T]) Dequeue() (T, bool) {
 
 func (q *Queue[T]) Peek() (T, bool) {
 	return q.data.PeekFront()
-}
-
-func (q *Queue[T]) Size() int {
-	return q.data.Size()
-}
-
-func (q *Queue[T]) Empty() bool {
-	return q.data.Empty()
 }

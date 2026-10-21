@@ -25,7 +25,7 @@ func Part2(sc *bufio.Scanner) (string, error) {
 	}
 
 	if err := sc.Err(); err != nil {
-		return "", err
+		return "", fmt.Errorf("scan calibration input: %w", err)
 	}
 
 	return strconv.Itoa(sum), nil

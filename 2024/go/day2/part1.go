@@ -2,6 +2,7 @@ package day2
 
 import (
 	"bufio"
+	"fmt"
 	"math"
 	"strconv"
 	"strings"
@@ -25,7 +26,7 @@ func Part1(sc *bufio.Scanner) (string, error) {
 
 		isSafe, err := checkLevels(true, levels)
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("check report %q: %w", line, err)
 		}
 
 		if isSafe {
@@ -34,7 +35,7 @@ func Part1(sc *bufio.Scanner) (string, error) {
 	}
 
 	if err := sc.Err(); err != nil {
-		return "", err
+		return "", fmt.Errorf("scan reports: %w", err)
 	}
 
 	return strconv.Itoa(safe), nil
@@ -49,12 +50,12 @@ func checkLevels(isSafe bool, levels []string) (bool, error) {
 
 		prevLevel, err := strconv.Atoi(levels[i-1])
 		if err != nil {
-			return false, err
+			return false, fmt.Errorf("parse previous level %q: %w", levels[i-1], err)
 		}
 
 		currLevel, err := strconv.Atoi(level)
 		if err != nil {
-			return false, err
+			return false, fmt.Errorf("parse current level %q: %w", level, err)
 		}
 
 		if i == 1 {

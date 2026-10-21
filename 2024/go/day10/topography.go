@@ -27,7 +27,7 @@ func readTopography(sc *bufio.Scanner) ([][]int, error) {
 	}
 
 	if err := sc.Err(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("scan topography: %w", err)
 	}
 
 	return topographyMap, nil

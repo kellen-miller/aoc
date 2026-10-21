@@ -2,22 +2,24 @@ package day7
 
 import (
 	"bufio"
+	"fmt"
 	"strconv"
 )
 
 func Part2(sc *bufio.Scanner) (string, error) {
-	var equations []*Equation //nolint:prealloc // unknown length
+	var equations []*Equation
 	for sc.Scan() {
-		eq, err := parseLine(sc.Text())
+		line := sc.Text()
+		eq, err := parseLine(line)
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("parse equation %q: %w", line, err)
 		}
 
 		equations = append(equations, eq)
 	}
 
 	if err := sc.Err(); err != nil {
-		return "", err
+		return "", fmt.Errorf("scan equations: %w", err)
 	}
 
 	var total int

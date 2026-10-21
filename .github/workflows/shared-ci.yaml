@@ -17,7 +17,7 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
       - id: paths
-        uses: kellen-miller/ci/.github/actions/changed-paths@75c70f9d5db7117810669e0af01fd2eafdc396c6
+        uses: kellen-miller/ci/.github/actions/changed-paths@6d83b6c0e8b6f407fa2f11e1c974449649cfa1f6
         with:
           filters: |
             {
@@ -46,16 +46,28 @@ jobs:
             }
 
   workflows:
-    uses: kellen-miller/ci/.github/workflows/gh-actions-lint.yaml@75c70f9d5db7117810669e0af01fd2eafdc396c6
+    uses: kellen-miller/ci/.github/workflows/gh-actions-lint.yaml@6d83b6c0e8b6f407fa2f11e1c974449649cfa1f6
   renovate:
-    uses: kellen-miller/ci/.github/workflows/renovate-config-validator.yaml@730a37faa538048765e3cbb2e9b1454cfc4eb722
+    uses: kellen-miller/ci/.github/workflows/renovate-config-validator.yaml@6d83b6c0e8b6f407fa2f11e1c974449649cfa1f6
   go:
     needs: changes
     if: ${{ !cancelled() && (needs.changes.result != 'success' || fromJSON(needs.changes.outputs.changes).go) }}
-    uses: kellen-miller/ci/.github/workflows/go-test.yaml@f1c71552558245556f16cc5d528c8ebf0b8b97c3
+    uses: kellen-miller/ci/.github/workflows/go-test.yaml@6d83b6c0e8b6f407fa2f11e1c974449649cfa1f6
     with:
       go-version-file: go.mod
       # Solver tests require ignored local puzzle inputs.
       test-packages: ./languages/go/pkg/...
       vet: true
       build-target: ./...
+
+  go-lint:
+    needs: changes
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || fromJSON(needs.changes.outputs.changes).go) }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: kellen-miller/ci/.github/actions/go-lint@6d83b6c0e8b6f407fa2f11e1c974449649cfa1f6
+        with:
+          go-version-file: go.mod

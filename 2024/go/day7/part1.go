@@ -3,6 +3,7 @@ package day7
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -13,18 +14,19 @@ type Equation struct {
 }
 
 func Part1(sc *bufio.Scanner) (string, error) {
-	var equations []*Equation //nolint:prealloc // unknown length
+	var equations []*Equation
 	for sc.Scan() {
-		eq, err := parseLine(sc.Text())
+		line := sc.Text()
+		eq, err := parseLine(line)
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("parse equation %q: %w", line, err)
 		}
 
 		equations = append(equations, eq)
 	}
 
 	if err := sc.Err(); err != nil {
-		return "", err
+		return "", fmt.Errorf("scan equations: %w", err)
 	}
 
 	var total int
@@ -49,7 +51,7 @@ func parseLine(line string) (*Equation, error) {
 	for i, n := range numbersStr {
 		number, err := strconv.Atoi(n)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("parse equation number %q: %w", n, err)
 		}
 
 		numbers[i] = number
@@ -57,7 +59,7 @@ func parseLine(line string) (*Equation, error) {
 
 	answer, err := strconv.Atoi(a)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("parse equation answer %q: %w", a, err)
 	}
 
 	return &Equation{

@@ -21,7 +21,7 @@ func Part1(sc *bufio.Scanner) (string, error) {
 	}
 
 	if err := sc.Err(); err != nil {
-		return "", err
+		return "", fmt.Errorf("scan multiplication instructions: %w", err)
 	}
 
 	return strconv.Itoa(total), nil
@@ -41,12 +41,12 @@ func findTotal(s string) (int, error) {
 
 		a, err := strconv.Atoi(match[1])
 		if err != nil {
-			return 0, err
+			return 0, fmt.Errorf("parse first multiplication operand %q: %w", match[1], err)
 		}
 
 		b, err := strconv.Atoi(match[2])
 		if err != nil {
-			return 0, err
+			return 0, fmt.Errorf("parse second multiplication operand %q: %w", match[2], err)
 		}
 
 		total += a * b

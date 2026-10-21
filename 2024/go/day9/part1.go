@@ -2,6 +2,7 @@ package day9
 
 import (
 	"bufio"
+	"fmt"
 	"strconv"
 )
 
@@ -12,7 +13,7 @@ func Part1(sc *bufio.Scanner) (string, error) {
 	}
 
 	if err := sc.Err(); err != nil {
-		return "", err
+		return "", fmt.Errorf("scan disk map: %w", err)
 	}
 
 	return strconv.Itoa(compact(layout)), nil

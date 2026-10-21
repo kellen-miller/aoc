@@ -23,7 +23,6 @@ func NewGrid[T any](cols int, rows int) *Grid[T] {
 }
 
 func NewGridFromFile[T any](sc *bufio.Scanner, lineParseFn func(line string, row int) []T) (*Grid[T], error) {
-	//nolint: prealloc // We don't know the size of the grid yet
 	var (
 		rows [][]T
 		i    int

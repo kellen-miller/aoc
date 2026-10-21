@@ -8,7 +8,7 @@ import (
 )
 
 func Part1(sc *bufio.Scanner) (string, error) {
-	var ( //nolint:prealloc // we don't know the size of the input
+	var (
 		sum                    int
 		potentialPartLocations [][]int
 		lastLine               string

@@ -2,12 +2,13 @@ package day2
 
 import (
 	"bufio"
+	"fmt"
 	"strconv"
 	"strings"
 )
 
 func Part2(sc *bufio.Scanner) (string, error) {
-	var input [][]int //nolint:prealloc // We don't know the size of the input
+	var input [][]int
 	for sc.Scan() {
 		row := strings.Fields(sc.Text())
 
@@ -15,7 +16,7 @@ func Part2(sc *bufio.Scanner) (string, error) {
 		for _, l := range row {
 			level, err := strconv.Atoi(l)
 			if err != nil {
-				return "", err
+				return "", fmt.Errorf("parse report level %q: %w", l, err)
 			}
 
 			levels = append(levels, level)
@@ -25,7 +26,7 @@ func Part2(sc *bufio.Scanner) (string, error) {
 	}
 
 	if err := sc.Err(); err != nil {
-		return "", err
+		return "", fmt.Errorf("scan reports: %w", err)
 	}
 
 	var safeLevels int
