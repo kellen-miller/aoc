@@ -1,0 +1,8 @@
+{
+  "checks": [
+    "go / Go Test",
+    "Renovate / Config validation",
+    "GitHub Actions / Workflow validation",
+    "Code duplication (CPD)"
+  ]
+}
