@@ -1,72 +1,44 @@
 package day1
 
 import (
+	"bufio"
 	"testing"
 
 	"github.com/kellen-miller/aoc/languages/go/pkg/io"
 	"github.com/stretchr/testify/require"
 )
 
+type calibrationExample struct {
+	name  string
+	input string
+	want  string
+}
+
 func TestPart1(t *testing.T) {
-	tcs := map[string]struct {
-		input string
-		want  string
-	}{
-		"example": {
-			input: "example1.txt",
-			want:  "142",
-		},
-		"input": {
-			input: "input.txt",
-			want:  "54630",
-		},
-	}
-
-	for name, tc := range tcs {
-		t.Run(name, func(t *testing.T) {
-			sc, closeFile := io.GetScanner(tc.input)
-			defer closeFile()
-
-			got, err := Part1(sc)
-			require.NoError(t, err)
-
-			if got != tc.want && tc.want != "" {
-				t.Errorf("Part1 = %s; want %s", got, tc.want)
-			} else {
-				t.Logf("Part1 = %s", got)
-			}
-		})
-	}
+	checkCalibration(t, Part1, []calibrationExample{
+		{name: "example", input: "example1.txt", want: "142"},
+		{name: "input", input: "input.txt", want: "54630"},
+	})
 }
 
 func TestPart2(t *testing.T) {
-	tcs := map[string]struct {
-		input string
-		want  string
-	}{
-		"example": {
-			input: "example2.txt",
-			want:  "281",
-		},
-		"input": {
-			input: "input.txt",
-			want:  "54770",
-		},
-	}
+	checkCalibration(t, Part2, []calibrationExample{
+		{name: "example", input: "example2.txt", want: "281"},
+		{name: "input", input: "input.txt", want: "54770"},
+	})
+}
 
-	for name, tc := range tcs {
-		t.Run(name, func(t *testing.T) {
-			sc, closeFile := io.GetScanner(tc.input)
+func checkCalibration(t *testing.T, solve func(*bufio.Scanner) (string, error), examples []calibrationExample) {
+	t.Helper()
+
+	for _, example := range examples {
+		t.Run(example.name, func(t *testing.T) {
+			scanner, closeFile := io.GetScanner(example.input)
 			defer closeFile()
 
-			got, err := Part2(sc)
+			got, err := solve(scanner)
 			require.NoError(t, err)
-
-			if got != tc.want && tc.want != "" {
-				t.Errorf("Part2 = %s; want %s", got, tc.want)
-			} else {
-				t.Logf("Part2 = %s", got)
-			}
+			require.Equal(t, example.want, got)
 		})
 	}
 }
