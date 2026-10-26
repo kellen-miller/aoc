@@ -5,49 +5,24 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"strings"
 
 	"github.com/ugurcsen/gods-generic/queues/arrayqueue"
 	"github.com/ugurcsen/gods-generic/sets/hashset"
 )
 
 func Part2(sc *bufio.Scanner) (string, error) {
-	var (
-		parseUpdate    bool
-		pageUpdates    [][]string
-		pageOrderRules = make(map[string][]string)
-	)
-	for sc.Scan() {
-		line := sc.Text()
-		if line == "" {
-			parseUpdate = true
-			continue
-		}
-
-		if parseUpdate {
-			pageUpdates = append(pageUpdates, strings.Split(line, ","))
-			continue
-		}
-
-		x, y, ok := strings.Cut(line, "|")
-		if !ok {
-			return "", fmt.Errorf("could not parse page order rule: %s", line)
-		}
-
-		pageOrderRules[x] = append(pageOrderRules[x], y)
-	}
-
-	if err := sc.Err(); err != nil {
-		return "", fmt.Errorf("scan page updates: %w", err)
+	manual, err := readPageManual(sc)
+	if err != nil {
+		return "", err
 	}
 
 	var middlePageSum int
-	for _, pageUpdate := range pageUpdates {
-		if valid := isOrdered(pageUpdate, pageOrderRules); valid {
+	for _, pageUpdate := range manual.updates {
+		if valid := isOrdered(pageUpdate, manual.rules); valid {
 			continue
 		}
 
-		correctedUpdate, err := topologicalSort(pageUpdate, pageOrderRules)
+		correctedUpdate, err := topologicalSort(pageUpdate, manual.rules)
 		if err != nil {
 			return "", fmt.Errorf("failed to reorder update %v: %w", pageUpdate, err)
 		}
