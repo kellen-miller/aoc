@@ -7,7 +7,7 @@ concurrency:
   group: go-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 jobs:
-  changes:
+  detect-changes:
     name: Go / Change detection
     runs-on: ubuntu-latest
     outputs:
@@ -46,10 +46,10 @@ jobs:
               ]
             }
 
-  go:
+  package-tests-build:
     name: Go
-    needs: changes
-    if: ${{ !cancelled() && (needs.changes.result != 'success' || fromJSON(needs.changes.outputs.changes).go) }}
+    needs: detect-changes
+    if: ${{ !cancelled() && (needs.detect-changes.result != 'success' || fromJSON(needs.detect-changes.outputs.changes).go) }}
     uses: kellen-miller/ci/.github/workflows/go-test.yaml@c188397b9147dbf21030cf2f3e4fc41bff37358b
     with:
       check-name: Package tests and build
@@ -59,10 +59,10 @@ jobs:
       vet: true
       build-target: ./...
 
-  go-lint:
+  static-analysis:
     name: Go / Static analysis
-    needs: changes
-    if: ${{ !cancelled() && (needs.changes.result != 'success' || fromJSON(needs.changes.outputs.changes).go) }}
+    needs: detect-changes
+    if: ${{ !cancelled() && (needs.detect-changes.result != 'success' || fromJSON(needs.detect-changes.outputs.changes).go) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
