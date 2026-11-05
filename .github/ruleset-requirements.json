@@ -1,8 +1,8 @@
 {
   "checks": [
-    "go / Go Test",
+    "Go / Package tests and build",
     "Renovate / Config validation",
     "GitHub Actions / Workflow validation",
-    "Code duplication (CPD)"
+    "Code duplication / Duplicate detection"
   ]
 }
