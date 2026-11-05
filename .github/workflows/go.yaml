@@ -47,7 +47,7 @@ jobs:
             }
 
   package-tests-build:
-    name: Go
+    name: languages/go
     needs: detect-changes
     if: ${{ !cancelled() && (needs.detect-changes.result != 'success' || fromJSON(needs.detect-changes.outputs.changes).go) }}
     uses: kellen-miller/ci/.github/workflows/go-test.yaml@c188397b9147dbf21030cf2f3e4fc41bff37358b

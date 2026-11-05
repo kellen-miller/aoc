@@ -1,8 +1,8 @@
 {
   "checks": [
-    "Go / Package tests and build",
-    "Renovate / Config validation",
-    "GitHub Actions / Workflow validation",
+    "languages/go / Package tests and build",
+    "renovate.json / Config validation",
+    ".github/workflows / Workflow validation",
     "JSCPD scan"
   ]
 }
