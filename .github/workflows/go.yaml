@@ -1,13 +1,14 @@
-name: Shared CI
+name: Go
 on:
   pull_request:
 permissions:
   contents: read
 concurrency:
-  group: shared-ci-${{ github.event.pull_request.number }}
+  group: go-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 jobs:
-  changes:
+  detect-changes:
+    name: Change detection
     runs-on: ubuntu-latest
     outputs:
       changes: ${{ steps.paths.outputs.changes }}
@@ -45,26 +46,23 @@ jobs:
               ]
             }
 
-  workflows:
-    name: GitHub Actions
-    uses: kellen-miller/ci/.github/workflows/gh-actions-lint.yaml@eb1a4f5900aaa6468cffb67513da61078265ba26
-  renovate:
-    name: Renovate
-    uses: kellen-miller/ci/.github/workflows/renovate-config-validator.yaml@eb1a4f5900aaa6468cffb67513da61078265ba26
-  go:
-    needs: changes
-    if: ${{ !cancelled() && (needs.changes.result != 'success' || fromJSON(needs.changes.outputs.changes).go) }}
-    uses: kellen-miller/ci/.github/workflows/go-test.yaml@6d83b6c0e8b6f407fa2f11e1c974449649cfa1f6
+  package-tests-build:
+    name: languages/go
+    needs: detect-changes
+    if: ${{ !cancelled() && (needs.detect-changes.result != 'success' || fromJSON(needs.detect-changes.outputs.changes).go) }}
+    uses: kellen-miller/ci/.github/workflows/go-test.yaml@c188397b9147dbf21030cf2f3e4fc41bff37358b
     with:
+      check-name: Package tests and build
       go-version-file: go.mod
       # Solver tests require ignored local puzzle inputs.
       test-packages: ./languages/go/pkg/...
       vet: true
       build-target: ./...
 
-  go-lint:
-    needs: changes
-    if: ${{ !cancelled() && (needs.changes.result != 'success' || fromJSON(needs.changes.outputs.changes).go) }}
+  static-analysis:
+    name: Static analysis
+    needs: detect-changes
+    if: ${{ !cancelled() && (needs.detect-changes.result != 'success' || fromJSON(needs.detect-changes.outputs.changes).go) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -73,14 +71,3 @@ jobs:
       - uses: kellen-miller/ci/.github/actions/go-lint@6d83b6c0e8b6f407fa2f11e1c974449649cfa1f6
         with:
           go-version-file: go.mod
-
-  duplication:
-    name: Code duplication (CPD)
-    permissions:
-      contents: read
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          persist-credentials: false
-      - uses: kellen-miller/ci/.github/actions/code-duplication@eb1a4f5900aaa6468cffb67513da61078265ba26
