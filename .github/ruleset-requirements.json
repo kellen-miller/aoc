@@ -3,6 +3,6 @@
     "Go / Package tests and build",
     "Renovate / Config validation",
     "GitHub Actions / Workflow validation",
-    "Code duplication / JSCPD scan"
+    "JSCPD scan"
   ]
 }

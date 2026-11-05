@@ -8,7 +8,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   detect-changes:
-    name: Go / Change detection
+    name: Change detection
     runs-on: ubuntu-latest
     outputs:
       changes: ${{ steps.paths.outputs.changes }}
@@ -60,7 +60,7 @@ jobs:
       build-target: ./...
 
   static-analysis:
-    name: Go / Static analysis
+    name: Static analysis
     needs: detect-changes
     if: ${{ !cancelled() && (needs.detect-changes.result != 'success' || fromJSON(needs.detect-changes.outputs.changes).go) }}
     runs-on: ubuntu-latest
